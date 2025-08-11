@@ -1,18 +1,18 @@
 class CulturesModel {
   int? id;
-  String name;
-  String variety;
-  int cycle;
-  String obs;
-  String actions;
+  String? name;
+  String? variety;
+  int? cycle;
+  String? obs;
+  String? actions;
 
   CulturesModel({
     this.id,
-    required this.name,
-    required this.variety,
-    required this.cycle,
-    required this.obs,
-    required this.actions,
+    this.name,
+    this.variety,
+    this.cycle,
+    this.obs,
+    this.actions,
   });
 
   factory CulturesModel.fromMap(Map<String, dynamic> map) {
@@ -29,6 +29,16 @@ class CulturesModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'name': name,
+      'variety': variety,
+      'cycle': cycle,
+      'obs': obs,
+      'actions': actions,
+    };
+  }
+
+  Map<String, dynamic> toMapForInsert() {
+    return {
       'name': name,
       'variety': variety,
       'cycle': cycle,

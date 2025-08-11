@@ -70,7 +70,8 @@ class CultureServiceDatabase {
 
   AsyncResult<bool> insertCulture(CulturesModel culture) async {
     try {
-      await _database!.insert(_tableName, culture.toMap());
+      await _database!.insert(_tableName, culture.toMapForInsert());
+
       return Success(true);
     } catch (e) {
       return Failure(Exception(e.toString()));
