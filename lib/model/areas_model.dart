@@ -1,31 +1,31 @@
 class AreasModel {
-  String id;
-  String name;
-  String area;
-  String location;
-  String plat;
-  double totalCost;
-  List<String> actions;
+  int? id;
+  String? name;
+  double? area;
+  String? location;
+  int? plat;
+  double? totalCost;
+  String? actions;
 
   AreasModel({
-    required this.id,
-    required this.name,
-    required this.area,
-    required this.location,
-    required this.plat,
-    required this.totalCost,
-    required this.actions,
+    this.id,
+    this.name,
+    this.area,
+    this.location,
+    this.plat,
+    this.totalCost,
+    this.actions,
   });
 
   factory AreasModel.fromMap(Map<String, dynamic> map) {
     return AreasModel(
-      id: map['id'],
-      name: map['name'],
-      area: map['area'],
-      location: map['location'],
-      plat: map['plat'],
-      totalCost: map['totalCost'],
-      actions: List<String>.from(map['actions']),
+      id: map['id'] as int,
+      name: map['name'] as String,
+      area: map['area'] as double,
+      location: map['location'] as String?,
+      plat: map['plat'] as int,
+      totalCost: map['total_cost'] as double?,
+      actions: map['actions'] as String?,
     );
   }
 
@@ -36,7 +36,18 @@ class AreasModel {
       'area': area,
       'location': location,
       'plat': plat,
-      'totalCost': totalCost,
+      'total_cost': totalCost,
+      'actions': actions,
+    };
+  }
+
+  Map<String, dynamic> toMapForInsert() {
+    return {
+      'name': name,
+      'area': area,
+      'location': location,
+      'plat': plat,
+      'total_cost': totalCost,
       'actions': actions,
     };
   }
