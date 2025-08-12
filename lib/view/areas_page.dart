@@ -39,14 +39,26 @@ class AreasPageState extends State<AreasPage> {
       builder: (context, child) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Lista de Áreas'),
+            title: const Text('Áreas'),
             actions: [
               IconButton(
-                icon: const Icon(Icons.filter_alt),
+                icon: Icon(Icons.filter_alt_outlined),
+                iconSize: 14.0,
+                tooltip: 'Filtrar',
                 onPressed: () {
-                  // modal
-                  // viewModel.addAreaCommand.execute();
+                  _showAddDialog(context);
                 },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 14.0),
+                child: IconButton(
+                  icon: Icon(Icons.clear_all_outlined),
+                  iconSize: 14.0,
+                  tooltip: 'Remover tudo',
+                  onPressed: () {
+                    viewModel.deleteAllAreasCommand.execute();
+                  },
+                ),
               ),
             ],
           ),
@@ -69,11 +81,12 @@ class AreasPageState extends State<AreasPage> {
                   width: double.infinity,
                   padding: EdgeInsets.all(8.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Nome: ${area.name}'),
+                          Text('${area.name}', style: TextStyle(fontSize: 16)),
                           Row(
                             children: [
                               IconButton(
@@ -90,11 +103,11 @@ class AreasPageState extends State<AreasPage> {
                           ),
                         ],
                       ),
-                      Row(children: [Text('Variedade: ${area.area}')]),
-                      Row(children: [Text('Ciclo: ${area.location}')]),
-                      Row(children: [Text('Canteiro: ${area.plat}')]),
-                      Row(children: [Text('Observações: ${area.totalCost}')]),
-                      Row(children: [Text('Ações: ${area.actions}')]),
+                      Text('Área: ${area.area}'),
+                      Text('Local: ${area.location}'),
+                      Text('Canteiros: ${area.plat}'),
+                      Text('Custo total: ${area.totalCost}'),
+                      Text('Ações: ${area.actions}'),
                     ],
                   ),
                 ),
@@ -124,46 +137,46 @@ class AreasPageState extends State<AreasPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Add New Area'),
+        title: const Text('Add Nova Área'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: const InputDecoration(labelText: 'Nome'),
               ),
               TextField(
                 controller: areaController,
-                decoration: const InputDecoration(labelText: 'Area'),
+                decoration: const InputDecoration(labelText: 'Área'),
               ),
               TextField(
                 controller: locationController,
-                decoration: const InputDecoration(labelText: 'Location'),
+                decoration: const InputDecoration(labelText: 'Local'),
               ),
               TextField(
                 controller: platController,
-                decoration: const InputDecoration(labelText: 'Plat'),
+                decoration: const InputDecoration(labelText: 'Canteiros'),
               ),
               TextField(
                 controller: totalCostController,
-                decoration: const InputDecoration(labelText: 'Total Cost'),
+                decoration: const InputDecoration(labelText: 'Custo total'),
                 keyboardType: TextInputType.number,
               ),
               TextField(
                 controller: actionsController,
-                decoration: const InputDecoration(labelText: 'Actions'),
+                decoration: const InputDecoration(labelText: 'Ações'),
                 maxLines: 2,
               ),
             ],
           ),
         ),
         actions: [
-          TextButton(
+          IconButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            icon: const Icon(Icons.cancel_outlined),
           ),
-          ElevatedButton(
+          IconButton(
             onPressed: () {
               final area = AreasModel(
                 name: nameController.text.isNotEmpty ? nameController.text : '',
@@ -181,7 +194,7 @@ class AreasPageState extends State<AreasPage> {
               viewModel.onInsert(area);
               Navigator.pop(context);
             },
-            child: const Text('Add'),
+            icon: const Icon(Icons.add_task),
           ),
         ],
       ),

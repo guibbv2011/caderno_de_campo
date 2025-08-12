@@ -51,4 +51,14 @@ class CulturesRepository {
 
     return result.fold((success) => Success(true), (error) => Failure(error));
   }
+
+  AsyncResult<bool> deleteAllCultures() async {
+    if (!databaseService.isOpen()) {
+      await databaseService.open();
+    }
+    final result = await databaseService.deleteAllCultures();
+    await databaseService.close();
+
+    return result.fold((success) => Success(true), (error) => Failure(error));
+  }
 }

@@ -9,6 +9,7 @@ class AreasViewModel extends ChangeNotifier {
   late final Command1<bool, AreasModel> insertAreaCommand;
   late final Command1<bool, AreasModel> updateAreaCommand;
   late final Command1<bool, int> deleteAreaCommand;
+  late final Command0<bool> deleteAllAreasCommand;
 
   AreasModel? area = AreasModel();
   List<AreasModel> areas = [];
@@ -36,10 +37,16 @@ class AreasViewModel extends ChangeNotifier {
       return result.onSuccess((_) => true);
     });
 
+    deleteAllAreasCommand = Command0<bool>(() async {
+      final result = await areasRepository.deleteAllAreas();
+      return result.onSuccess((_) => true);
+    });
+
     fetchAreasCommand.addListener(_onFetchAreas);
     insertAreaCommand.addListener(_onInsertArea);
     updateAreaCommand.addListener(_onUpdateArea);
     deleteAreaCommand.addListener(_onDeleteArea);
+    deleteAllAreasCommand.addListener(_onDeleteAllAreas);
   }
 
   void _onFetchAreas() {
@@ -106,6 +113,21 @@ class AreasViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _onDeleteAllAreas() {
+    final state = deleteAllAreasCommand.value;
+    if (state is SuccessCommand<bool>) {
+      error = null;
+      isLoading = false;
+      fetchAreasCommand.execute();
+    } else if (state is FailureCommand<bool>) {
+      isLoading = false;
+      error = state.error.toString();
+    } else if (state is RunningCommand<bool>) {
+      isLoading = true;
+    }
+    notifyListeners();
+  }
+
   void onInsert(AreasModel area) {
     insertAreaCommand.execute(area);
   }
@@ -118,12 +140,17 @@ class AreasViewModel extends ChangeNotifier {
     updateAreaCommand.execute(area);
   }
 
+  void onDeleteAll() {
+    deleteAllAreasCommand.execute();
+  }
+
   @override
   void dispose() {
     fetchAreasCommand.removeListener(_onFetchAreas);
     insertAreaCommand.removeListener(_onInsertArea);
     deleteAreaCommand.removeListener(_onDeleteArea);
     updateAreaCommand.removeListener(_onUpdateArea);
+    deleteAllAreasCommand.removeListener(_onDeleteAllAreas);
     super.dispose();
   }
 }

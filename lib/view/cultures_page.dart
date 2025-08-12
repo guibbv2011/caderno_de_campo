@@ -3,7 +3,7 @@ import 'package:caderno_do_campo/model/repository/cultures_repository.dart';
 import 'package:caderno_do_campo/model/service/database/culture_db.dart';
 import 'package:caderno_do_campo/viewmodel/cultures_viewmodel.dart';
 import 'package:flutter/material.dart';
-import 'package:result_dart/result_dart.dart';
+// import 'package:result_dart/result_dart.dart';
 
 class CulturesPage extends StatefulWidget {
   const CulturesPage({super.key});
@@ -45,13 +45,26 @@ class CulturesPageState extends State<CulturesPage> {
       builder: (context, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('Lista de Culturas'),
+            title: Text('Culturas'),
             actions: [
               IconButton(
-                icon: Icon(Icons.filter_alt),
+                icon: Icon(Icons.filter_alt_outlined),
+                iconSize: 14.0,
+                tooltip: 'Filtrar',
                 onPressed: () {
-                  _showAddDialog(context);
+                  //_showAddDialog(context);
                 },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 14.0),
+                child: IconButton(
+                  icon: Icon(Icons.clear_all_outlined),
+                  iconSize: 14.0,
+                  tooltip: 'Remover tudo',
+                  onPressed: () {
+                    viewModel.deleteAllCulturesCommand.execute();
+                  },
+                ),
               ),
             ],
           ),
@@ -74,11 +87,15 @@ class CulturesPageState extends State<CulturesPage> {
                   width: double.infinity,
                   padding: EdgeInsets.all(8.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Nome: ${culture.name}'),
+                          Text(
+                            '${culture.name}',
+                            style: TextStyle(fontSize: 16),
+                          ),
                           Row(
                             children: [
                               IconButton(
@@ -95,10 +112,10 @@ class CulturesPageState extends State<CulturesPage> {
                           ),
                         ],
                       ),
-                      Row(children: [Text('Variedade: ${culture.variety}')]),
-                      Row(children: [Text('Ciclo: ${culture.cycle}')]),
-                      Row(children: [Text('Observações: ${culture.obs}')]),
-                      Row(children: [Text('Ações: ${culture.actions}')]),
+                      Text('Variedade: ${culture.variety}'),
+                      Text('Ciclo: ${culture.cycle}'),
+                      Text('Observações: ${culture.obs}'),
+                      Text('Ações: ${culture.actions}'),
                     ],
                   ),
                 ),
@@ -127,43 +144,43 @@ class CulturesPageState extends State<CulturesPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Add New Culture'),
+        title: const Text('Add Nova Cultura'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: const InputDecoration(labelText: 'Nome'),
               ),
               TextField(
                 controller: varietyController,
-                decoration: const InputDecoration(labelText: 'Variety'),
+                decoration: const InputDecoration(labelText: 'Variedade'),
               ),
               TextField(
                 controller: cycleController,
-                decoration: const InputDecoration(labelText: 'Cycle (days)'),
+                decoration: const InputDecoration(labelText: 'Ciclo (dias)'),
                 keyboardType: TextInputType.number,
               ),
               TextField(
                 controller: obsController,
-                decoration: const InputDecoration(labelText: 'Observations'),
+                decoration: const InputDecoration(labelText: 'Observações'),
                 maxLines: 2,
               ),
               TextField(
                 controller: actionsController,
-                decoration: const InputDecoration(labelText: 'Actions'),
+                decoration: const InputDecoration(labelText: 'Ações'),
                 maxLines: 2,
               ),
             ],
           ),
         ),
         actions: [
-          TextButton(
+          IconButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            icon: const Icon(Icons.cancel_outlined),
           ),
-          ElevatedButton(
+          IconButton(
             onPressed: () {
               final culture = CulturesModel(
                 name: nameController.text.isNotEmpty ? nameController.text : '',
@@ -180,7 +197,7 @@ class CulturesPageState extends State<CulturesPage> {
               viewModel.onInsert(culture);
               Navigator.pop(context);
             },
-            child: const Text('Add'),
+            icon: const Icon(Icons.add_task),
           ),
         ],
       ),

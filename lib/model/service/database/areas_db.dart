@@ -62,10 +62,10 @@ class AreasServiceDatabase {
           actions: maps[i][_actionsColumn],
         );
       });
-      if (listMapAreas.isNotEmpty) {
-        return Success(listMapAreas);
-      }
-      return Success([]);
+      // if (listMapAreas.isNotEmpty) {
+      //   return Success(listMapAreas);
+      // }
+      return Success(listMapAreas);
     } catch (e) {
       return Failure(Exception(e.toString()));
     }
@@ -73,8 +73,8 @@ class AreasServiceDatabase {
 
   AsyncResult<bool> insertArea(AreasModel area) async {
     try {
-      final result = await _database!.insert(_tableName, area.toMapForInsert());
-
+      // final result = await _database!.insert(_tableName, area.toMapForInsert());
+      await _database!.insert(_tableName, area.toMapForInsert());
       return Success(true);
     } catch (e) {
       return Failure(Exception(e.toString()));
@@ -108,6 +108,15 @@ class AreasServiceDatabase {
     try {
       await _database!.close();
       return Success(Null);
+    } catch (e) {
+      return Failure(Exception(e.toString()));
+    }
+  }
+
+  AsyncResult<bool> deleteAllAreas() async {
+    try {
+      await _database!.delete(_tableName);
+      return Success(true);
     } catch (e) {
       return Failure(Exception(e.toString()));
     }

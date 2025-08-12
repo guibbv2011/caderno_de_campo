@@ -9,6 +9,7 @@ class CulturesViewModel extends ChangeNotifier {
   late final Command0<List<CulturesModel>> fetchCulturesCommand;
   late final Command1<bool, CulturesModel> insertCultureCommand;
   late final Command1<bool, int> deleteCultureCommand;
+  late final Command0<bool> deleteAllCulturesCommand;
   late final Command1<bool, CulturesModel> updateCultureCommand;
 
   CulturesModel? culture = CulturesModel();
@@ -37,10 +38,16 @@ class CulturesViewModel extends ChangeNotifier {
       return result.onSuccess((_) => true);
     });
 
+    deleteAllCulturesCommand = Command0<bool>(() async {
+      final result = await culturesRepository.deleteAllCultures();
+      return result.onSuccess((_) => true);
+    });
+
     fetchCulturesCommand.addListener(_onFetchCulture);
     insertCultureCommand.addListener(_onInsertCulture);
     deleteCultureCommand.addListener(_onDeleteCulture);
     updateCultureCommand.addListener(_onUpdateCulture);
+    deleteAllCulturesCommand.addListener(_onDeleteAllCultures);
   }
 
   void _onFetchCulture() {
@@ -90,6 +97,21 @@ class CulturesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _onDeleteAllCultures() {
+    final state = deleteAllCulturesCommand.value;
+    if (state is SuccessCommand<bool>) {
+      error = null;
+      isLoading = false;
+      fetchCulturesCommand.execute();
+    } else if (state is FailureCommand<bool>) {
+      isLoading = false;
+      error = state.error.toString();
+    } else if (state is RunningCommand<bool>) {
+      isLoading = true;
+    }
+    notifyListeners();
+  }
+
   void _onUpdateCulture() {
     final state = updateCultureCommand.value;
     if (state is SuccessCommand<bool>) {
@@ -117,12 +139,17 @@ class CulturesViewModel extends ChangeNotifier {
     updateCultureCommand.execute(culture);
   }
 
+  void onDeleteAll() {
+    deleteAllCulturesCommand.execute();
+  }
+
   @override
   void dispose() {
     fetchCulturesCommand.removeListener(_onFetchCulture);
     insertCultureCommand.removeListener(_onInsertCulture);
     deleteCultureCommand.removeListener(_onDeleteCulture);
     updateCultureCommand.removeListener(_onUpdateCulture);
+    deleteAllCulturesCommand.removeListener(_onDeleteAllCultures);
     super.dispose();
   }
 }

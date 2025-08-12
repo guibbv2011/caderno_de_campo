@@ -109,4 +109,13 @@ class CultureServiceDatabase {
       return Failure(Exception(e.toString()));
     }
   }
+
+  AsyncResult<bool> deleteAllCultures() async {
+    try {
+      await _database!.delete(_tableName);
+      return Success(true);
+    } catch (e) {
+      return Failure(Exception(e.toString()));
+    }
+  }
 }

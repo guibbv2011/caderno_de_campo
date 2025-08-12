@@ -48,4 +48,14 @@ class AreasRepository {
 
     return result.fold((success) => Success(true), (error) => Failure(error));
   }
+
+  AsyncResult<bool> deleteAllAreas() async {
+    if (!databaseService.isOpen()) {
+      await databaseService.open();
+    }
+    final result = await databaseService.deleteAllAreas();
+    await databaseService.close();
+
+    return result.fold((success) => Success(true), (error) => Failure(error));
+  }
 }
