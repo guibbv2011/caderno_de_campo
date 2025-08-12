@@ -1,6 +1,5 @@
 import 'package:caderno_do_campo/model/cultures_model.dart';
 import 'package:caderno_do_campo/model/service/database/culture_db.dart';
-
 import 'package:result_dart/result_dart.dart';
 
 class CulturesRepository {

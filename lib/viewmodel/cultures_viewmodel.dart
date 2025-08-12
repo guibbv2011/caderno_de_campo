@@ -62,30 +62,30 @@ class CulturesViewModel extends ChangeNotifier {
   void _onInsertCulture() {
     final state = insertCultureCommand.value;
 
-    // Handle different command states
     if (state is RunningCommand<bool>) {
       isLoading = true;
     } else if (state is SuccessCommand<bool>) {
       isLoading = false;
       error = null;
-      // Refresh the list after successful insert
       fetchCulturesCommand.execute();
-      notifyListeners();
     } else if (state is FailureCommand<bool>) {
       isLoading = false;
       error = state.error.toString();
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   void _onDeleteCulture() {
     final state = deleteCultureCommand.value;
     if (state is SuccessCommand<bool>) {
       error = null;
-      // Refresh the list after successful delete
+      isLoading = false;
       fetchCulturesCommand.execute();
     } else if (state is FailureCommand<bool>) {
+      isLoading = false;
       error = state.error.toString();
+    } else if (state is RunningCommand<bool>) {
+      isLoading = true;
     }
     notifyListeners();
   }
@@ -94,23 +94,26 @@ class CulturesViewModel extends ChangeNotifier {
     final state = updateCultureCommand.value;
     if (state is SuccessCommand<bool>) {
       error = null;
-      // Refresh the list after successful update
+      isLoading = false;
       fetchCulturesCommand.execute();
     } else if (state is FailureCommand<bool>) {
+      isLoading = false;
       error = state.error.toString();
+    } else if (state is RunningCommand<bool>) {
+      isLoading = true;
     }
     notifyListeners();
   }
 
-  void onInsertCulture(CulturesModel culture) {
+  void onInsert(CulturesModel culture) {
     insertCultureCommand.execute(culture);
   }
 
-  void onDeleteCulture(int id) {
+  void onDelete(int id) {
     deleteCultureCommand.execute(id);
   }
 
-  void onUpdateCulture(CulturesModel culture) {
+  void onUpdate(CulturesModel culture) {
     updateCultureCommand.execute(culture);
   }
 

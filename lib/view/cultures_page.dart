@@ -3,6 +3,7 @@ import 'package:caderno_do_campo/model/repository/cultures_repository.dart';
 import 'package:caderno_do_campo/model/service/database/culture_db.dart';
 import 'package:caderno_do_campo/viewmodel/cultures_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:result_dart/result_dart.dart';
 
 class CulturesPage extends StatefulWidget {
   const CulturesPage({super.key});
@@ -49,7 +50,7 @@ class CulturesPageState extends State<CulturesPage> {
               IconButton(
                 icon: Icon(Icons.filter_alt),
                 onPressed: () {
-                  _showAddCultureDialog(context);
+                  _showAddDialog(context);
                 },
               ),
             ],
@@ -107,7 +108,7 @@ class CulturesPageState extends State<CulturesPage> {
           floatingActionButton: FloatingActionButton(
             mini: true,
             onPressed: () {
-              _showAddCultureDialog(context);
+              _showAddDialog(context);
             },
             child: Icon(Icons.add),
           ),
@@ -116,7 +117,7 @@ class CulturesPageState extends State<CulturesPage> {
     );
   }
 
-  void _showAddCultureDialog(BuildContext context) {
+  void _showAddDialog(BuildContext context) {
     final nameController = TextEditingController();
     final varietyController = TextEditingController();
     final cycleController = TextEditingController();
@@ -176,7 +177,7 @@ class CulturesPageState extends State<CulturesPage> {
                     : '',
               );
 
-              viewModel.onInsertCulture(culture);
+              viewModel.onInsert(culture);
               Navigator.pop(context);
             },
             child: const Text('Add'),
