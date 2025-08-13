@@ -1,9 +1,11 @@
 import 'package:caderno_do_campo/model/cultures_model.dart';
 import 'package:caderno_do_campo/model/repository/cultures_repository.dart';
 import 'package:caderno_do_campo/model/service/database/culture_db.dart';
+import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
+import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/cultures_viewmodel.dart';
 import 'package:flutter/material.dart';
-// import 'package:result_dart/result_dart.dart';
+import 'package:flutter/services.dart';
 
 class CulturesPage extends StatefulWidget {
   const CulturesPage({super.key});
@@ -19,14 +21,11 @@ class CulturesPageState extends State<CulturesPage> {
   void initState() {
     super.initState();
 
-    // Initialize the database service and repository
     final databaseService = CultureServiceDatabase();
     final repository = CulturesRepository(databaseService: databaseService);
 
-    // Initialize the ViewModel with the repository
     viewModel = CulturesViewModel(culturesRepository: repository);
 
-    // Add listener and fetch initial data
     viewModel.addListener(() => setState(() {}));
     viewModel.fetchCulturesCommand.execute();
   }
@@ -51,9 +50,7 @@ class CulturesPageState extends State<CulturesPage> {
                 icon: Icon(Icons.filter_alt_outlined),
                 iconSize: 14.0,
                 tooltip: 'Filtrar',
-                onPressed: () {
-                  //_showAddDialog(context);
-                },
+                onPressed: () {},
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 14.0),
@@ -101,12 +98,20 @@ class CulturesPageState extends State<CulturesPage> {
                               IconButton(
                                 iconSize: 14,
                                 icon: Icon(Icons.edit),
-                                onPressed: () {},
+                                onPressed: () {
+                                  _showUpdateDialog(
+                                    context,
+                                    culture,
+                                    viewModel,
+                                  );
+                                },
                               ),
                               IconButton(
                                 iconSize: 14,
                                 icon: Icon(Icons.delete),
-                                onPressed: () {},
+                                onPressed: () {
+                                  viewModel.onDelete(culture.id!);
+                                },
                               ),
                             ],
                           ),
@@ -125,7 +130,7 @@ class CulturesPageState extends State<CulturesPage> {
           floatingActionButton: FloatingActionButton(
             mini: true,
             onPressed: () {
-              _showAddDialog(context);
+              _showAddDialog(context, viewModel);
             },
             child: Icon(Icons.add),
           ),
@@ -133,74 +138,87 @@ class CulturesPageState extends State<CulturesPage> {
       },
     );
   }
+}
 
-  void _showAddDialog(BuildContext context) {
-    final nameController = TextEditingController();
-    final varietyController = TextEditingController();
-    final cycleController = TextEditingController();
-    final obsController = TextEditingController();
-    final actionsController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add Nova Cultura'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nome'),
-              ),
-              TextField(
-                controller: varietyController,
-                decoration: const InputDecoration(labelText: 'Variedade'),
-              ),
-              TextField(
-                controller: cycleController,
-                decoration: const InputDecoration(labelText: 'Ciclo (dias)'),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: obsController,
-                decoration: const InputDecoration(labelText: 'Observações'),
-                maxLines: 2,
-              ),
-              TextField(
-                controller: actionsController,
-                decoration: const InputDecoration(labelText: 'Ações'),
-                maxLines: 2,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.cancel_outlined),
-          ),
-          IconButton(
-            onPressed: () {
-              final culture = CulturesModel(
-                name: nameController.text.isNotEmpty ? nameController.text : '',
-                variety: varietyController.text.isNotEmpty
-                    ? varietyController.text
-                    : '',
-                cycle: int.tryParse(cycleController.text) ?? 0,
-                obs: obsController.text.isNotEmpty ? obsController.text : '',
-                actions: actionsController.text.isNotEmpty
-                    ? actionsController.text
-                    : '',
-              );
-
-              viewModel.onInsert(culture);
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.add_task),
-          ),
-        ],
+void _showAddDialog(BuildContext context, CulturesViewModel viewModel) {
+  showInsertDialog<CulturesModel>(
+    context: context,
+    title: 'Adicionar',
+    fields: [
+      InsertDialog(key: 'name', label: 'Nome', initialValue: ''),
+      InsertDialog(key: 'variety', label: 'Variedade', initialValue: ''),
+      InsertDialog(
+        key: 'cycle',
+        label: 'Ciclo (dias)',
+        initialValue: '',
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       ),
-    );
-  }
+      InsertDialog(key: 'obs', label: 'Observações', initialValue: ''),
+      InsertDialog(key: 'actions', label: 'Ações', initialValue: ''),
+    ],
+    modelBuilder: (culture) => CulturesModel(
+      name: culture['name'] ?? '',
+      variety: culture['variety'] ?? '',
+      cycle: int.tryParse(culture['cycle']!) ?? 0,
+      obs: culture['obs'] ?? '',
+      actions: culture['actions'] ?? '',
+    ),
+
+    onInsert: (culture) async {
+      viewModel.onInsert(culture);
+    },
+  );
+}
+
+void _showUpdateDialog(
+  BuildContext context,
+  CulturesModel model,
+  CulturesViewModel viewModel,
+) {
+  showUpdateDialog<CulturesModel>(
+    context: context,
+    model: model,
+    title: 'Atualizar',
+    fields: [
+      UpdateDialog(
+        key: 'id',
+        label: 'ID',
+        initialValue: model.id.toString(),
+        enabled: false,
+      ),
+      UpdateDialog(key: 'name', label: 'Nome', initialValue: model.name!),
+      UpdateDialog(
+        key: 'variety',
+        label: 'Variedade',
+        initialValue: model.variety!,
+      ),
+      UpdateDialog(
+        key: 'cycle',
+        label: 'Ciclo (dias)',
+        initialValue: model.cycle.toString(),
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      ),
+      UpdateDialog(key: 'obs', label: 'Observações', initialValue: model.obs!),
+      UpdateDialog(
+        key: 'actions',
+        label: 'Ações',
+        initialValue: model.actions!,
+      ),
+    ],
+
+    modelBuilder: (culture) => CulturesModel(
+      id: int.tryParse(culture['id']!),
+      name: culture['name']!,
+      variety: culture['variety']!,
+      cycle: int.tryParse(culture['cycle']!),
+      obs: culture['obs']!,
+      actions: culture['actions']!,
+    ),
+
+    onUpdate: (culture) {
+      viewModel.onUpdate(culture);
+    },
+  );
 }

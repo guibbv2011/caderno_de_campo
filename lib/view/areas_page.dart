@@ -1,8 +1,11 @@
 import 'package:caderno_do_campo/model/areas_model.dart';
 import 'package:caderno_do_campo/model/repository/areas_repository.dart';
 import 'package:caderno_do_campo/model/service/database/areas_db.dart';
+import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
+import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/areas_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AreasPage extends StatefulWidget {
   const AreasPage({super.key});
@@ -46,7 +49,7 @@ class AreasPageState extends State<AreasPage> {
                 iconSize: 14.0,
                 tooltip: 'Filtrar',
                 onPressed: () {
-                  _showAddDialog(context);
+                  // _showAddDialog(context);
                 },
               ),
               Padding(
@@ -56,7 +59,7 @@ class AreasPageState extends State<AreasPage> {
                   iconSize: 14.0,
                   tooltip: 'Remover tudo',
                   onPressed: () {
-                    viewModel.deleteAllAreasCommand.execute();
+                    viewModel.onDeleteAll();
                   },
                 ),
               ),
@@ -92,12 +95,16 @@ class AreasPageState extends State<AreasPage> {
                               IconButton(
                                 iconSize: 14,
                                 icon: Icon(Icons.edit),
-                                onPressed: () {},
+                                onPressed: () {
+                                  _showUpdateDialog(context, area, viewModel);
+                                },
                               ),
                               IconButton(
                                 iconSize: 14,
                                 icon: Icon(Icons.delete),
-                                onPressed: () {},
+                                onPressed: () {
+                                  viewModel.onDelete(area.id!);
+                                },
                               ),
                             ],
                           ),
@@ -117,7 +124,7 @@ class AreasPageState extends State<AreasPage> {
           floatingActionButton: FloatingActionButton(
             mini: true,
             onPressed: () {
-              _showAddDialog(context);
+              _showAddDialog(context, viewModel);
             },
             child: Icon(Icons.add),
           ),
@@ -125,79 +132,108 @@ class AreasPageState extends State<AreasPage> {
       },
     );
   }
+}
 
-  void _showAddDialog(BuildContext context) {
-    final nameController = TextEditingController();
-    final areaController = TextEditingController();
-    final locationController = TextEditingController();
-    final platController = TextEditingController();
-    final totalCostController = TextEditingController();
-    final actionsController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add Nova Área'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nome'),
-              ),
-              TextField(
-                controller: areaController,
-                decoration: const InputDecoration(labelText: 'Área'),
-              ),
-              TextField(
-                controller: locationController,
-                decoration: const InputDecoration(labelText: 'Local'),
-              ),
-              TextField(
-                controller: platController,
-                decoration: const InputDecoration(labelText: 'Canteiros'),
-              ),
-              TextField(
-                controller: totalCostController,
-                decoration: const InputDecoration(labelText: 'Custo total'),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: actionsController,
-                decoration: const InputDecoration(labelText: 'Ações'),
-                maxLines: 2,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.cancel_outlined),
-          ),
-          IconButton(
-            onPressed: () {
-              final area = AreasModel(
-                name: nameController.text.isNotEmpty ? nameController.text : '',
-                area: double.tryParse(areaController.text) ?? 0.0,
-                location: locationController.text.isNotEmpty
-                    ? locationController.text
-                    : '',
-                plat: int.tryParse(platController.text) ?? 0,
-                totalCost: double.tryParse(totalCostController.text) ?? 0.0,
-                actions: actionsController.text.isNotEmpty
-                    ? actionsController.text
-                    : '',
-              );
-
-              viewModel.onInsert(area);
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.add_task),
-          ),
-        ],
+void _showAddDialog(BuildContext context, AreasViewModel viewModel) {
+  showInsertDialog(
+    context: context,
+    title: 'Adicionar',
+    fields: [
+      InsertDialog(key: 'name', label: 'Nome', initialValue: ''),
+      InsertDialog(
+        key: 'area',
+        label: 'Área (m²)',
+        initialValue: '',
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       ),
-    );
-  }
+      InsertDialog(key: 'location', label: 'Localização', initialValue: ''),
+      InsertDialog(
+        key: 'plat',
+        label: 'Canteiros',
+        initialValue: '',
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      ),
+      InsertDialog(
+        key: 'totalCost',
+        label: 'Custo Total',
+        initialValue: '',
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      ),
+      InsertDialog(key: 'actions', label: 'Ações', initialValue: ''),
+    ],
+    modelBuilder: (area) => AreasModel(
+      name: area['name'] ?? '',
+      area: double.tryParse(area['area'].toString()) ?? 0.0,
+      location: area['location'] ?? '',
+      plat: int.tryParse(area['plat'].toString()) ?? 0,
+      totalCost: double.tryParse(area['totalCost'].toString()) ?? 0.0,
+      actions: area['actions'] ?? '',
+    ),
+    onInsert: (area) => viewModel.onInsert(area),
+  );
+}
+
+void _showUpdateDialog(
+  BuildContext context,
+  AreasModel model,
+  AreasViewModel viewModel,
+) {
+  showUpdateDialog(
+    context: context,
+    model: model,
+    title: 'Atualizar',
+    fields: [
+      UpdateDialog(
+        key: 'id',
+        label: 'ID',
+        initialValue: model.id.toString(),
+        enabled: false,
+      ),
+      UpdateDialog(key: 'name', label: 'Nome', initialValue: model.name!),
+      UpdateDialog(
+        key: 'area',
+        label: 'Área (m²)',
+        initialValue: model.area.toString(),
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      ),
+      UpdateDialog(
+        key: 'location',
+        label: 'Localização',
+        initialValue: model.location!,
+      ),
+      UpdateDialog(
+        key: 'plat',
+        label: 'Canteiros',
+        initialValue: model.plat.toString(),
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      ),
+      UpdateDialog(
+        key: 'totalCost',
+        label: 'Custo Total',
+        initialValue: model.totalCost.toString(),
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      ),
+      UpdateDialog(
+        key: 'actions',
+        label: 'Ações',
+        initialValue: model.actions!,
+      ),
+    ],
+    modelBuilder: (area) => AreasModel(
+      id: int.tryParse(area['id'].toString()) ?? 0,
+      name: area['name'] ?? '',
+      area: double.tryParse(area['area'].toString()) ?? 0.0,
+      location: area['location'] ?? '',
+      plat: int.tryParse(area['plat'].toString()) ?? 0,
+      totalCost: double.tryParse(area['totalCost'].toString()) ?? 0.0,
+      actions: area['actions'] ?? '',
+    ),
+    onUpdate: (area) => viewModel.onUpdate(area),
+  );
 }

@@ -1,8 +1,11 @@
 import 'package:caderno_do_campo/model/costs_model.dart';
 import 'package:caderno_do_campo/model/repository/costs_repository.dart';
 import 'package:caderno_do_campo/model/service/database/costs_db.dart';
+import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
+import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/costs_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CostsPage extends StatefulWidget {
   const CostsPage({super.key});
@@ -56,7 +59,7 @@ class CostsPageState extends State<CostsPage> {
                   iconSize: 14.0,
                   tooltip: 'Remover tudo',
                   onPressed: () {
-                    viewModel.deleteAllCostsCommand.execute();
+                    viewModel.onDeleteAll();
                   },
                 ),
               ),
@@ -97,12 +100,20 @@ class CostsPageState extends State<CostsPage> {
                                     IconButton(
                                       iconSize: 14,
                                       icon: Icon(Icons.edit),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        _showUpdateDialog(
+                                          context,
+                                          cost,
+                                          viewModel,
+                                        );
+                                      },
                                     ),
                                     IconButton(
                                       iconSize: 14,
                                       icon: Icon(Icons.delete),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        viewModel.onDelete(cost.id!);
+                                      },
                                     ),
                                   ],
                                 ),
@@ -122,7 +133,7 @@ class CostsPageState extends State<CostsPage> {
           floatingActionButton: FloatingActionButton(
             mini: true,
             onPressed: () {
-              _showAddDialog(context);
+              _showAddDialog(context, viewModel);
             },
             child: Icon(Icons.add),
           ),
@@ -130,81 +141,96 @@ class CostsPageState extends State<CostsPage> {
       },
     );
   }
+}
 
-  void _showAddDialog(BuildContext context) {
-    final dateTimeController = TextEditingController();
-    final areaController = TextEditingController(); // selection area.name
-    final categoryController = TextEditingController();
-    final descriptionController = TextEditingController();
-    final valueController = TextEditingController();
-    final actionsController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add Nova Custo'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: categoryController,
-                decoration: const InputDecoration(labelText: 'Categoria'),
-              ),
-              TextField(
-                controller: areaController,
-                decoration: const InputDecoration(labelText: 'Área'),
-              ),
-              TextField(
-                controller: dateTimeController,
-                decoration: const InputDecoration(labelText: 'Data'),
-              ),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(labelText: 'Descrição'),
-              ),
-              TextField(
-                controller: valueController,
-                decoration: const InputDecoration(labelText: 'Custo'),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: actionsController,
-                decoration: const InputDecoration(labelText: 'Ações'),
-                maxLines: 2,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.cancel_outlined),
-          ),
-          IconButton(
-            onPressed: () {
-              final area = CostsModel(
-                category: categoryController.text.isNotEmpty
-                    ? categoryController.text
-                    : '',
-                area: areaController.text.isNotEmpty ? areaController.text : '',
-                dateTime: DateTime.now().toIso8601String(),
-                description: descriptionController.text.isNotEmpty
-                    ? descriptionController.text
-                    : '',
-                value: double.tryParse(valueController.text) ?? 0.0,
-                actions: actionsController.text.isNotEmpty
-                    ? actionsController.text
-                    : '',
-              );
-
-              viewModel.onInsert(area);
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.add_task),
-          ),
-        ],
+void _showAddDialog(BuildContext context, CostsViewModel viewModel) {
+  showInsertDialog<CostsModel>(
+    context: context,
+    title: 'Adicionar',
+    fields: [
+      InsertDialog(
+        key: 'dateTime',
+        label: 'Data',
+        initialValue: DateTime.now().toString(),
       ),
-    );
-  }
+      InsertDialog(key: 'area', label: 'Área', initialValue: ''),
+      InsertDialog(key: 'category', label: 'Categoria', initialValue: ''),
+      InsertDialog(key: 'description', label: 'Descrição', initialValue: ''),
+      InsertDialog(
+        key: 'value',
+        label: 'Valor',
+        initialValue: '',
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      ),
+      InsertDialog(key: 'actions', label: 'Ações', initialValue: ''),
+    ],
+    modelBuilder: (cost) => CostsModel(
+      dateTime: DateTime.now().toString(),
+      area: cost['area'] ?? '',
+      category: cost['category'] ?? '',
+      description: cost['description'] ?? '',
+      value: double.tryParse(cost['value'].toString()) ?? 0.0,
+      actions: cost['actions'] ?? '',
+    ),
+    onInsert: (cost) => viewModel.onInsert(cost),
+  );
+}
+
+void _showUpdateDialog(
+  BuildContext context,
+  CostsModel model,
+  CostsViewModel viewModel,
+) {
+  showUpdateDialog<CostsModel>(
+    context: context,
+    model: model,
+    title: 'Atualizar',
+    fields: [
+      UpdateDialog(
+        key: 'id',
+        label: 'ID',
+        initialValue: model.id.toString(),
+        enabled: false,
+      ),
+      UpdateDialog(
+        key: 'dateTime',
+        label: 'Data',
+        initialValue: model.dateTime!.toString(),
+      ),
+      UpdateDialog(key: 'area', label: 'Área', initialValue: model.area!),
+      UpdateDialog(
+        key: 'category',
+        label: 'Categoria',
+        initialValue: model.category!,
+      ),
+      UpdateDialog(
+        key: 'description',
+        label: 'Descrição',
+        initialValue: model.description!,
+      ),
+      UpdateDialog(
+        key: 'value',
+        label: 'Valor',
+        initialValue: model.value.toString(),
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      ),
+      UpdateDialog(
+        key: 'actions',
+        label: 'Ações',
+        initialValue: model.actions!,
+      ),
+    ],
+    modelBuilder: (cost) => CostsModel(
+      id: int.tryParse(cost['id']!),
+      dateTime: cost['dateTime']!,
+      area: cost['area']!,
+      category: cost['category']!,
+      description: cost['description']!,
+      value: double.tryParse(cost['value']!.toString()) ?? 0.0,
+      actions: cost['actions']!,
+    ),
+    onUpdate: (cost) => viewModel.onUpdate(cost),
+  );
 }
