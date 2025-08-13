@@ -23,8 +23,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   final List<Widget> _pages = [
-    RegistersPage(),
     OverviewPage(),
+    RegistersPage(),
     CulturesPage(),
     AreasPage(),
     CostsPage(),
@@ -52,12 +52,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             ListTile(
-              title: Text('Registros'),
+              title: Text('Inicio'),
               selected: _selectedIndex == 0,
               onTap: () => {_changePage(0), Navigator.pop(context)},
             ),
             ListTile(
-              title: Text('Inicio'),
+              title: Text('Registros'),
               selected: _selectedIndex == 1,
               onTap: () => {_changePage(1), Navigator.pop(context)},
             ),
