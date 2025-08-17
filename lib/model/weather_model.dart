@@ -1,43 +1,82 @@
 class WeatherModel {
-  final double degrees;
-  final String weather;
-  final double minTemp;
-  final double maxTemp;
-  final double windSpeed;
-  final double humidity;
-  final double pressure;
+  final double? meanTemp;
+  final double? minTemp;
+  final double? maxTemp;
+  final double? windSpeed;
+  final double? humidity;
+  final double? pressure;
+  final double? precipitation;
+  final double? cloudCover;
 
   WeatherModel({
-    required this.degrees,
-    required this.weather,
-    required this.minTemp,
-    required this.maxTemp,
-    required this.windSpeed,
-    required this.humidity,
-    required this.pressure,
+    this.precipitation,
+    this.meanTemp,
+    this.minTemp,
+    this.maxTemp,
+    this.windSpeed,
+    this.humidity,
+    this.pressure,
+    this.cloudCover,
   });
 
   factory WeatherModel.fromMap(Map<String, dynamic> map) {
     return WeatherModel(
-      degrees: map['degrees'],
-      weather: map['weather'],
-      minTemp: map['minTemp'],
-      maxTemp: map['maxTemp'],
-      windSpeed: map['windSpeed'],
+      precipitation: map['precipitation'],
+      meanTemp: map['mean_temp'],
+      minTemp: map['min_temp'],
+      maxTemp: map['max_temp'],
+      windSpeed: map['wind_speed'],
       humidity: map['humidity'],
       pressure: map['pressure'],
+      cloudCover: map['cloud_cover'],
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, double> toMap() {
     return {
-      'degrees': degrees,
-      'weather': weather,
-      'minTemp': minTemp,
-      'maxTemp': maxTemp,
-      'windSpeed': windSpeed,
-      'humidity': humidity,
-      'pressure': pressure,
+      'precipitation': precipitation!,
+      'mean_temp': meanTemp!,
+      'min_temp': minTemp!,
+      'max_temp': maxTemp!,
+      'wind_speed': windSpeed!,
+      'humidity': humidity!,
+      'pressure': pressure!,
+    };
+  }
+}
+
+class WeatherDayModel {
+  final double? meanTemp;
+  final double? minTemp;
+  final double? maxTemp;
+  final double? precipitation;
+  final double? humidity;
+
+  WeatherDayModel({
+    this.meanTemp,
+    this.minTemp,
+    this.maxTemp,
+    this.precipitation,
+    this.humidity,
+  });
+
+  factory WeatherDayModel.fromMap(Map<String, dynamic> map) {
+    return WeatherDayModel(
+      meanTemp: map['mean_temp'],
+      minTemp: map['min_temp'],
+      maxTemp: map['max_temp'],
+      precipitation: map['precipitation'],
+      humidity: map['humidity'],
+    );
+  }
+
+  Map<String, double> toMap() {
+    return {
+      'mean_temp': meanTemp!,
+      'min_temp': minTemp!,
+      'max_temp': maxTemp!,
+      'precipitation': precipitation!,
+      'humidity': humidity!,
     };
   }
 }
