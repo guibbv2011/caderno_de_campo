@@ -65,71 +65,65 @@ class CostsPageState extends State<CostsPage> {
               ),
             ],
           ),
-          body: viewModel.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  itemCount: viewModel.costs.length,
-                  itemBuilder: (context, index) {
-                    final cost = viewModel.costs[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        top: 10.0,
-                        bottom: 4.0,
-                        left: 12.0,
-                        right: 12.0,
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.lightGreen),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        width: double.infinity,
-                        padding: EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  '${cost.category}',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      iconSize: 14,
-                                      icon: Icon(Icons.edit),
-                                      onPressed: () {
-                                        _showUpdateDialog(
-                                          context,
-                                          cost,
-                                          viewModel,
-                                        );
-                                      },
-                                    ),
-                                    IconButton(
-                                      iconSize: 14,
-                                      icon: Icon(Icons.delete),
-                                      onPressed: () {
-                                        viewModel.onDelete(cost.id!);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Text('Data: ${cost.dateTime}'),
-                            Text('Área: ${cost.area}'),
-                            Text('descrição: ${cost.description}'),
-                            Text('Custo: ${cost.value}'),
-                            Text('Ações: ${cost.actions}'),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+          body: ListView.builder(
+            itemCount: viewModel.costs.length,
+            itemBuilder: (context, index) {
+              final cost = viewModel.costs[index];
+              return Padding(
+                padding: const EdgeInsets.only(
+                  top: 10.0,
+                  bottom: 4.0,
+                  left: 12.0,
+                  right: 12.0,
                 ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.lightGreen),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  width: double.infinity,
+                  padding: EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${cost.category}',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                iconSize: 14,
+                                icon: Icon(Icons.edit),
+                                onPressed: () {
+                                  _showUpdateDialog(context, cost, viewModel);
+                                },
+                              ),
+                              IconButton(
+                                iconSize: 14,
+                                icon: Icon(Icons.delete),
+                                onPressed: () {
+                                  viewModel.onDelete(cost.id!);
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Text('Data: ${cost.dateTime}'),
+                      Text('Área: ${cost.area}'),
+                      Text('descrição: ${cost.description}'),
+                      Text('Custo: ${cost.value}'),
+                      Text('Ações: ${cost.actions}'),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
           floatingActionButton: FloatingActionButton(
             mini: true,
             onPressed: () {
