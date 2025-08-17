@@ -16,23 +16,18 @@ class RegistersPageState extends State<RegistersPage> {
           appBar: AppBar(
             title: const Text('Registros'),
             actions: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                  iconSize: 14,
-                  icon: const Icon(Icons.filter_alt),
-                  onPressed: () {},
-                ),
+              IconButton(
+                icon: Icon(Icons.filter_alt_outlined),
+                iconSize: 14.0,
+                tooltip: 'Filtrar',
+                onPressed: () {},
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextButton.icon(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.lightGreen,
-                  ),
-                  icon: const Icon(Icons.add),
-                  label: const Text('Adicionar'),
+                padding: const EdgeInsets.only(right: 14.0),
+                child: IconButton(
+                  icon: Icon(Icons.clear_all_outlined),
+                  iconSize: 14.0,
+                  tooltip: 'Remover todo',
                   onPressed: () {},
                 ),
               ),
