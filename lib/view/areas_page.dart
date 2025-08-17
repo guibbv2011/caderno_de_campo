@@ -1,5 +1,5 @@
 import 'package:caderno_do_campo/model/areas_model.dart';
-import 'package:caderno_do_campo/model/repository/areas_repository.dart';
+import 'package:caderno_do_campo/model/repository/database/areas_repository.dart';
 import 'package:caderno_do_campo/model/service/database/areas_db.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';

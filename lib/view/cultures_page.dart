@@ -1,5 +1,5 @@
 import 'package:caderno_do_campo/model/cultures_model.dart';
-import 'package:caderno_do_campo/model/repository/cultures_repository.dart';
+import 'package:caderno_do_campo/model/repository/database/cultures_repository.dart';
 import 'package:caderno_do_campo/model/service/database/culture_db.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';

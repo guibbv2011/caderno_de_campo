@@ -1,5 +1,5 @@
 import 'package:caderno_do_campo/model/cultures_model.dart';
-import 'package:caderno_do_campo/model/repository/cultures_repository.dart';
+import 'package:caderno_do_campo/model/repository/database/cultures_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:result_command/result_command.dart';

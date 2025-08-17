@@ -1,5 +1,5 @@
 import 'package:caderno_do_campo/model/costs_model.dart';
-import 'package:caderno_do_campo/model/repository/costs_repository.dart';
+import 'package:caderno_do_campo/model/repository/database/costs_repository.dart';
 import 'package:caderno_do_campo/model/service/database/costs_db.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';

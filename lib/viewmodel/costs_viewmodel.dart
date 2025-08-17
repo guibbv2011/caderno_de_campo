@@ -1,5 +1,5 @@
 import 'package:caderno_do_campo/model/costs_model.dart';
-import 'package:caderno_do_campo/model/repository/costs_repository.dart';
+import 'package:caderno_do_campo/model/repository/database/costs_repository.dart';
 import 'package:flutter/widgets.dart';
 import 'package:result_command/result_command.dart';
 

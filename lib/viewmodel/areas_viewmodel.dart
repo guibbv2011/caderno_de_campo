@@ -1,5 +1,5 @@
 import 'package:caderno_do_campo/model/areas_model.dart';
-import 'package:caderno_do_campo/model/repository/areas_repository.dart';
+import 'package:caderno_do_campo/model/repository/database/areas_repository.dart';
 import 'package:flutter/widgets.dart';
 import 'package:result_command/result_command.dart';
 
