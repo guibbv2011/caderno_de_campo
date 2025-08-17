@@ -17,6 +17,8 @@ dependencies:
   path: ^1.9.1
   result_dart: ^2.1.1
   result_command: ^2.1.0
+  open_meteo: ^2.1.6
+  lucide_icons_flutter: ^3.0.9
 
 dev_dependencies:
   flutter_test:
