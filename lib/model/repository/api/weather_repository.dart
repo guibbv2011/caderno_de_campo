@@ -52,7 +52,7 @@ class WeatherRepository {
             el.add(success.values.elementAt(i).values);
           }
 
-          for (var v = 2; v < (el.first.keys.length); v++) {
+          for (var v = 1; v < (el.first.keys.length); v++) {
             final WeatherDayModel mapWeathers = WeatherDayModel(
               meanTemp: el.elementAt(0).values.elementAt(v),
               minTemp: el.elementAt(1).values.elementAt(v),
@@ -62,6 +62,8 @@ class WeatherRepository {
             );
             elmap.add(mapWeathers);
           }
+
+          return Success(elmap);
         },
         (error) {
           return Failure(Exception('onFailure in weather_repository: $error'));
