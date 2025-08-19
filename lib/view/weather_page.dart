@@ -63,25 +63,51 @@ class WeatherPageState extends State<WeatherPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(24.0),
-      child: Column(
-        children: [
-          _card(viewModel, 'Hoje'),
-          _card1(viewMap, 0),
-          _card1(viewMap, 1),
+    if (viewWeather.isLoading == true) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tempo'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 14.0),
+            child: IconButton(
+              icon: Icon(Icons.refresh_outlined),
+              iconSize: 14.0,
+              tooltip: 'Atualizar',
+              onPressed: () {
+                viewWeather.fetchCurrentWeatherCommand.execute();
+                viewWeatherDays.fetchTwoDaysAfterWeatherCommand.execute();
+              },
+            ),
+          ),
         ],
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+            _card(viewWeather.weather, viewWeatherDays.map!, 'Hoje'),
+            _card1(viewWeatherDays.map!, 1),
+            _card1(viewWeatherDays.map!, 2),
+          ],
+        ),
       ),
     );
   }
 }
 
-Widget _card(WeatherViewModel viewCommand, String whichDay) {
+Widget _card(
+  WeatherModel viewModelCommand,
+  List<WeatherDayModel> viewMapCommand,
+  String whichDay,
+) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Container(
       padding: EdgeInsets.symmetric(vertical: 4),
-      width: double.infinity * 0.8,
+      width: double.infinity,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.lightGreenAccent.shade700),
         borderRadius: BorderRadius.circular(8.0),
@@ -93,16 +119,54 @@ Widget _card(WeatherViewModel viewCommand, String whichDay) {
           Padding(padding: const EdgeInsets.all(8.0), child: Text(whichDay)),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: _weatherWidget(
-              'Temperatura',
-              MainAxisAlignment.start,
-              true,
-              10,
-              64,
-              Colors.lightGreen,
-              LucideIcons.sunSnow,
-              viewCommand.weather.meanTemp,
-              'C°',
+            child: Row(
+              children: [
+                _weatherWidget(
+                  'Temperatura',
+                  MainAxisAlignment.start,
+                  true,
+                  10,
+                  64,
+                  Colors.lightGreen,
+                  LucideIcons.sunSnow,
+                  viewModelCommand.meanTemp,
+                  'C°',
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _weatherWidget(
+                        'Mínima',
+                        null,
+                        false,
+                        10,
+                        24,
+                        Colors.lightBlue,
+                        LucideIcons.sunSnow,
+                        viewMapCommand.isNotEmpty
+                            ? viewMapCommand.elementAt(0).minTemp!
+                            : 0.0,
+                        'C°',
+                      ),
+                      _weatherWidget(
+                        'Máxima',
+                        null,
+                        false,
+                        10,
+                        24,
+                        Colors.orangeAccent,
+                        LucideIcons.sunSnow,
+                        viewMapCommand.isNotEmpty
+                            ? viewMapCommand.elementAt(0).maxTemp!
+                            : 0.0,
+                        'C°',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(
@@ -119,7 +183,7 @@ Widget _card(WeatherViewModel viewCommand, String whichDay) {
                   24,
                   Colors.blueAccent,
                   LucideIcons.bubbles,
-                  viewCommand.weather.humidity,
+                  viewModelCommand.humidity,
                   '',
                 ),
                 _weatherWidget(
@@ -130,7 +194,7 @@ Widget _card(WeatherViewModel viewCommand, String whichDay) {
                   24,
                   Colors.grey.shade200,
                   LucideIcons.wind,
-                  viewCommand.weather.windSpeed,
+                  viewModelCommand.windSpeed,
                   '(km/h)',
                 ),
                 _weatherWidget(
@@ -141,7 +205,7 @@ Widget _card(WeatherViewModel viewCommand, String whichDay) {
                   24,
                   Colors.grey.shade400,
                   LucideIcons.windArrowDown,
-                  viewCommand.weather.pressure,
+                  viewModelCommand.pressure,
                   '',
                 ),
                 _weatherWidget(
@@ -152,7 +216,7 @@ Widget _card(WeatherViewModel viewCommand, String whichDay) {
                   24,
                   Colors.blue,
                   LucideIcons.cloudHail,
-                  viewCommand.weather.precipitation,
+                  viewModelCommand.precipitation,
                   '%',
                 ),
                 _weatherWidget(
@@ -163,7 +227,7 @@ Widget _card(WeatherViewModel viewCommand, String whichDay) {
                   24,
                   Colors.grey.shade700,
                   LucideIcons.cloudy,
-                  viewCommand.weather.cloudCover,
+                  viewModelCommand.cloudCover,
                   '',
                 ),
               ],
@@ -175,7 +239,13 @@ Widget _card(WeatherViewModel viewCommand, String whichDay) {
   );
 }
 
-Widget _card1(WeatherViewModel viewCommand, int whichDay) {
+Widget _card1(List<WeatherDayModel> viewCommand, int whichDay) {
+  final String day = switch (whichDay) {
+    0 => '',
+    1 => 'Amanhã',
+    2 => 'Depos de Amanhã',
+    _ => '',
+  };
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Container(
@@ -189,10 +259,7 @@ Widget _card1(WeatherViewModel viewCommand, int whichDay) {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(whichDay == 0 ? 'Amanhã' : 'Depos de Amanhã'),
-          ),
+          Padding(padding: const EdgeInsets.all(8.0), child: Text(day)),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: _weatherWidget(
@@ -203,10 +270,8 @@ Widget _card1(WeatherViewModel viewCommand, int whichDay) {
               64,
               Colors.lightGreen,
               LucideIcons.sunSnow,
-              viewCommand.map != null
-                  ? viewCommand.map!.isEmpty
-                        ? 0.0
-                        : viewCommand.map!.elementAt(whichDay).meanTemp
+              viewCommand.isNotEmpty
+                  ? viewCommand.elementAt(whichDay).meanTemp!
                   : 0.0,
               'C°',
             ),
@@ -225,10 +290,8 @@ Widget _card1(WeatherViewModel viewCommand, int whichDay) {
                   24,
                   Colors.lightBlue,
                   LucideIcons.sunSnow,
-                  viewCommand.map != null
-                      ? viewCommand.map!.isEmpty
-                            ? 0.0
-                            : viewCommand.map!.elementAt(whichDay).minTemp
+                  viewCommand.isNotEmpty
+                      ? viewCommand.elementAt(whichDay).minTemp
                       : 0.0,
                   'C°',
                 ),
@@ -240,10 +303,8 @@ Widget _card1(WeatherViewModel viewCommand, int whichDay) {
                   24,
                   Colors.orangeAccent,
                   LucideIcons.sunSnow,
-                  viewCommand.map != null
-                      ? viewCommand.map!.isEmpty
-                            ? 0.0
-                            : viewCommand.map!.elementAt(whichDay).maxTemp
+                  viewCommand.isNotEmpty
+                      ? viewCommand.elementAt(whichDay).maxTemp
                       : 0.0,
                   'C°',
                 ),
@@ -255,10 +316,8 @@ Widget _card1(WeatherViewModel viewCommand, int whichDay) {
                   24,
                   Colors.blueAccent,
                   LucideIcons.bubbles,
-                  viewCommand.map != null
-                      ? viewCommand.map!.isEmpty
-                            ? 0.0
-                            : viewCommand.map!.elementAt(whichDay).humidity
+                  viewCommand.isNotEmpty
+                      ? viewCommand.elementAt(whichDay).humidity
                       : 0.0,
                   '',
                 ),
@@ -270,10 +329,8 @@ Widget _card1(WeatherViewModel viewCommand, int whichDay) {
                   24,
                   Colors.blue,
                   LucideIcons.cloudHail,
-                  viewCommand.map != null
-                      ? viewCommand.map!.isEmpty
-                            ? 0.0
-                            : viewCommand.map!.elementAt(whichDay).precipitation
+                  viewCommand.isNotEmpty
+                      ? viewCommand.elementAt(whichDay).precipitation
                       : 0.0,
                   '%',
                 ),
