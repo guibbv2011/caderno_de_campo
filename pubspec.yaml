@@ -19,6 +19,8 @@ dependencies:
   result_command: ^2.1.0
   open_meteo: ^2.1.6
   lucide_icons_flutter: ^3.0.9
+  location: ^8.0.1
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
