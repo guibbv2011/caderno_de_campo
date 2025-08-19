@@ -1,9 +1,12 @@
+import 'package:caderno_do_campo/model/repository/location/location_repository.dart';
+import 'package:caderno_do_campo/model/service/location/location_service.dart';
 import 'package:caderno_do_campo/view/areas_page.dart';
 import 'package:caderno_do_campo/view/costs_page.dart';
 import 'package:caderno_do_campo/view/cultures_page.dart';
 import 'package:caderno_do_campo/view/overview_page.dart';
 import 'package:caderno_do_campo/view/registers_page.dart';
 import 'package:caderno_do_campo/view/weather_page.dart';
+import 'package:caderno_do_campo/viewmodel/location_viewmodel.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -14,7 +17,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late LocationViewmodel viewLocate;
+
   int _selectedIndex = 0;
+  @override
+  void initState() {
+    final locationService = LocationService();
+    final locationRepository = LocationRepository(
+      locationService: locationService,
+    );
+    viewLocate = LocationViewmodel(locationRepository: locationRepository);
+    viewLocate.addListener(() => setState(() {}));
+    viewLocate.fetchLocationCommand.execute();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    viewLocate.removeListener(() => setState(() => {}));
+    viewLocate.dispose();
+    super.dispose();
+  }
 
   void _changePage(int indexPage) {
     setState(() {
