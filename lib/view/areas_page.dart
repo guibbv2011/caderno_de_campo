@@ -44,14 +44,6 @@ class AreasPageState extends State<AreasPage> {
           appBar: AppBar(
             title: const Text('Áreas'),
             actions: [
-              IconButton(
-                icon: Icon(Icons.filter_alt_outlined),
-                iconSize: 14.0,
-                tooltip: 'Filtrar',
-                onPressed: () {
-                  // _showAddDialog(context);
-                },
-              ),
               Padding(
                 padding: const EdgeInsets.only(right: 14.0),
                 child: IconButton(

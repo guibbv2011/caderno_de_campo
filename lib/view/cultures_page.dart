@@ -46,12 +46,6 @@ class CulturesPageState extends State<CulturesPage> {
           appBar: AppBar(
             title: Text('Culturas'),
             actions: [
-              IconButton(
-                icon: Icon(Icons.filter_alt_outlined),
-                iconSize: 14.0,
-                tooltip: 'Filtrar',
-                onPressed: () {},
-              ),
               Padding(
                 padding: const EdgeInsets.only(right: 14.0),
                 child: IconButton(
