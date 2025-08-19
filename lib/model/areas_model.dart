@@ -4,7 +4,6 @@ class AreasModel {
   double? area;
   String? location;
   int? plat;
-  double? totalCost;
   String? actions;
 
   AreasModel({
@@ -13,7 +12,6 @@ class AreasModel {
     this.area,
     this.location,
     this.plat,
-    this.totalCost,
     this.actions,
   });
 
@@ -24,7 +22,6 @@ class AreasModel {
       area: map['area'] as double,
       location: map['location'] as String?,
       plat: map['plat'] as int,
-      totalCost: map['total_cost'] as double?,
       actions: map['actions'] as String?,
     );
   }
@@ -36,7 +33,6 @@ class AreasModel {
       'area': area,
       'location': location,
       'plat': plat,
-      'total_cost': totalCost,
       'actions': actions,
     };
   }
@@ -47,7 +43,6 @@ class AreasModel {
       'area': area,
       'location': location,
       'plat': plat,
-      'total_cost': totalCost,
       'actions': actions,
     };
   }

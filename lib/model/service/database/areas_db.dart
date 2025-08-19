@@ -12,7 +12,6 @@ class AreasServiceDatabase {
   static const String _areaColumn = 'area';
   static const String _locationColumn = 'location';
   static const String _platColumn = 'plat';
-  static const String _totalCostColumn = 'total_cost';
   static const String _actionsColumn = 'actions';
 
   Database? _database;
@@ -33,7 +32,6 @@ class AreasServiceDatabase {
                 $_areaColumn DOUBLE NOT NULL,
                 $_locationColumn TEXT NOT NULL,
                 $_platColumn INTEGER NOT NULL,
-                $_totalCostColumn DOUBLE NOT NULL,
                 $_actionsColumn TEXT NOT NULL
               )
             ''');
@@ -58,13 +56,10 @@ class AreasServiceDatabase {
           area: maps[i][_areaColumn],
           location: maps[i][_locationColumn],
           plat: maps[i][_platColumn],
-          totalCost: maps[i][_totalCostColumn],
           actions: maps[i][_actionsColumn],
         );
       });
-      // if (listMapAreas.isNotEmpty) {
-      //   return Success(listMapAreas);
-      // }
+
       return Success(listMapAreas);
     } catch (e) {
       return Failure(Exception(e.toString()));
@@ -73,7 +68,6 @@ class AreasServiceDatabase {
 
   AsyncResult<bool> insertArea(AreasModel area) async {
     try {
-      // final result = await _database!.insert(_tableName, area.toMapForInsert());
       await _database!.insert(_tableName, area.toMapForInsert());
       return Success(true);
     } catch (e) {
