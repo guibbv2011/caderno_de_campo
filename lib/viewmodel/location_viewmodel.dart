@@ -16,11 +16,8 @@ class LocationViewmodel extends ChangeNotifier {
   Future<void> saveDoubles(double lat, double long) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    double latitude = lat;
-    double longitude = long;
-
-    await prefs.setDouble('latitude', latitude);
-    await prefs.setDouble('longitude', longitude);
+    await prefs.setDouble('latitude', lat);
+    await prefs.setDouble('longitude', long);
   }
 
   LocationViewmodel({required this.locationRepository}) {

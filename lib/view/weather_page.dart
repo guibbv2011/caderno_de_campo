@@ -2,6 +2,7 @@ import 'package:caderno_do_campo/model/repository/api/weather_repository.dart';
 import 'package:caderno_do_campo/model/service/api/weather_api.dart';
 import 'package:caderno_do_campo/model/weather_model.dart';
 import 'package:caderno_do_campo/viewmodel/weather_viewmodel.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +20,11 @@ class WeatherPageState extends State<WeatherPage> {
   double _latitude = 0.0;
   double _longitude = 0.0;
 
+  Future<void> savePage(int page) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('page', page);
+  }
+
   Future<void> _loadDoubles() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _latitude = prefs.getDouble('latitude')!;
@@ -31,6 +37,10 @@ class WeatherPageState extends State<WeatherPage> {
 
   Future<void> weatherViews() async {
     // debugPrint('_lat in watherview: $_latitude');
+    debugPrint('_lat in watherview: $_latitude');
+    if (_latitude == 0.0) {
+      savePage(5);
+    }
     // debugPrint('_long in weatherview: $_longitude');
     final WeatherRepository weatherRepository = WeatherRepository(
       weatherService: WeatherApiService(myLat: _latitude, myLong: _longitude),
@@ -77,8 +87,12 @@ class WeatherPageState extends State<WeatherPage> {
               iconSize: 14.0,
               tooltip: 'Atualizar',
               onPressed: () {
-                viewWeather.fetchCurrentWeatherCommand.execute();
-                viewWeatherDays.fetchTwoDaysAfterWeatherCommand.execute();
+                if (_latitude == 0.0) {
+                  Phoenix.rebirth(context);
+                } else {
+                  viewWeather.fetchCurrentWeatherCommand.execute();
+                  viewWeatherDays.fetchTwoDaysAfterWeatherCommand.execute();
+                }
               },
             ),
           ),

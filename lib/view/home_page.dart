@@ -8,6 +8,7 @@ import 'package:caderno_do_campo/view/registers_page.dart';
 import 'package:caderno_do_campo/view/weather_page.dart';
 import 'package:caderno_do_campo/viewmodel/location_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -18,10 +19,27 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late LocationViewmodel viewLocate;
-
   int _selectedIndex = 0;
+
+  Future<void> savePage(int page) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('page', page);
+  }
+
+  Future<void> loadPage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _selectedIndex = prefs.getInt('page')!;
+    setState(() {});
+  }
+
   @override
   void initState() {
+    loadPage().whenComplete(() {
+      if (_selectedIndex == 5) {
+        savePage(0);
+      }
+    });
+
     final locationService = LocationService();
     final locationRepository = LocationRepository(
       locationService: locationService,
@@ -41,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _changePage(int indexPage) {
     setState(() {
+      viewLocate.fetchLocationCommand.execute();
       _selectedIndex = indexPage;
     });
   }
