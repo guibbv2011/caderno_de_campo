@@ -6,24 +6,30 @@ class LocationService {
   AsyncResultDart<LocationModel, Exception> getlocation() async {
     Location location = Location();
     bool serviceEnabled;
+    int tryies = 0;
     PermissionStatus permissionGranted;
     LocationData locationData;
+    LocationModel local;
+
     serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
+    for (tryies; (!serviceEnabled && tryies < 3); tryies++) {
       serviceEnabled = await location.requestService();
     }
 
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
+    tryies = 0;
+    if (serviceEnabled) {
+      permissionGranted = await location.hasPermission();
+      for (
+        tryies;
+        (permissionGranted == PermissionStatus.denied && tryies < 3);
+        tryies++
+      ) {
+        permissionGranted = await location.requestPermission();
+      }
     }
 
     locationData = await location.getLocation();
-
-    final local = LocationModel(
-      locationData.latitude!,
-      locationData.longitude!,
-    );
+    local = LocationModel(locationData.latitude!, locationData.longitude!);
 
     return Success(local);
   }
