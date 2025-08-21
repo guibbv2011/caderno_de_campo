@@ -1,9 +1,11 @@
 import 'package:caderno_do_campo/model/costs_model.dart';
 import 'package:caderno_do_campo/model/repository/database/costs_repository.dart';
+import 'package:caderno_do_campo/model/repository/database/list_titles_repository.dart';
 import 'package:caderno_do_campo/model/service/database/costs_db.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/costs_viewmodel.dart';
+import 'package:caderno_do_campo/viewmodel/list_titles_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -16,6 +18,7 @@ class CostsPage extends StatefulWidget {
 
 class CostsPageState extends State<CostsPage> {
   late final CostsViewModel viewModel;
+  late final ListTitlesViewModel viewModelTitles;
 
   @override
   void initState() {
@@ -24,14 +27,22 @@ class CostsPageState extends State<CostsPage> {
     final repository = CostsRepository(databaseService: databaseService);
     viewModel = CostsViewModel(costsRepository: repository);
 
+    final listRepository = ListTitlesRepository();
+    viewModelTitles = ListTitlesViewModel(listTitleRepository: listRepository);
+
     viewModel.addListener(() => setState(() {}));
+    viewModelTitles.addListener(() => setState(() {}));
     viewModel.fetchCostsCommand.execute();
+    // viewModelTitles.fetchCulturesTitlesCommand.execute();
+    viewModelTitles.fetchAreasTitlesCommand.execute();
   }
 
   @override
   void dispose() {
     viewModel.removeListener(() => setState(() {}));
+    viewModelTitles.removeListener(() => setState(() {}));
     viewModel.dispose();
+    viewModelTitles.dispose();
     super.dispose();
   }
 
@@ -119,7 +130,13 @@ class CostsPageState extends State<CostsPage> {
           floatingActionButton: FloatingActionButton(
             mini: true,
             onPressed: () {
-              _showAddDialog(context, viewModel);
+              viewModelTitles.fetchAreasTitlesCommand.execute().whenComplete(
+                () => _showAddDialog(
+                  context,
+                  viewModel,
+                  viewModelTitles.listAreas,
+                ),
+              );
             },
             child: Icon(Icons.add),
           ),
@@ -129,9 +146,19 @@ class CostsPageState extends State<CostsPage> {
   }
 }
 
-void _showAddDialog(BuildContext context, CostsViewModel viewModel) {
+void _showAddDialog(
+  BuildContext context,
+  CostsViewModel viewModel,
+  List<String>? list,
+) {
+  // String? selectedValue;
+  for (String l in list!) {
+    debugPrint('List: ${l}');
+  }
+
   showInsertDialog<CostsModel>(
     context: context,
+    list: list,
     title: 'Adicionar',
     fields: [
       InsertDialog(
@@ -139,7 +166,7 @@ void _showAddDialog(BuildContext context, CostsViewModel viewModel) {
         label: 'Data',
         initialValue: DateTime.now().toString(),
       ),
-      InsertDialog(key: 'area', label: 'Área', initialValue: ''),
+      InsertDialog(key: 'areacost', label: 'Área', initialValue: ''),
       InsertDialog(key: 'category', label: 'Categoria', initialValue: ''),
       InsertDialog(key: 'description', label: 'Descrição', initialValue: ''),
       InsertDialog(
