@@ -146,7 +146,7 @@ void _showAddDialog(BuildContext context, CulturesViewModel viewModel) {
         label: 'Ciclo (dias)',
         initialValue: '',
         keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
       ),
       InsertDialog(key: 'obs', label: 'Observações', initialValue: ''),
       InsertDialog(key: 'actions', label: 'Ações', initialValue: ''),
@@ -192,7 +192,7 @@ void _showUpdateDialog(
         label: 'Ciclo (dias)',
         initialValue: model.cycle.toString(),
         keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
       ),
       UpdateDialog(key: 'obs', label: 'Observações', initialValue: model.obs!),
       UpdateDialog(

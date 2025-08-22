@@ -51,6 +51,8 @@ void showInsertDialog<T>({
                 return TypeAheadField<String>(
                   builder: (context, controller, focusNode) {
                     return TextField(
+                      keyboardType: field.keyboardType,
+                      inputFormatters: field.inputFormatters,
                       controller: areaValue.value,
                       focusNode: focusNode,
                       autofocus: true,
@@ -87,6 +89,8 @@ void showInsertDialog<T>({
                   builder: (context, controller, focusNode) {
                     return TextField(
                       controller: cultureValue.value,
+                      keyboardType: field.keyboardType,
+                      inputFormatters: field.inputFormatters,
                       focusNode: focusNode,
                       autofocus: true,
                       decoration: InputDecoration(
@@ -129,7 +133,7 @@ void showInsertDialog<T>({
                   ),
                   enabled: field.enabled,
                   keyboardType: field.keyboardType,
-                  inputFormatters: [],
+                  inputFormatters: field.inputFormatters,
                 );
               }
             }).toList(),

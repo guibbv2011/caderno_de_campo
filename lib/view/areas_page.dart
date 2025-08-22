@@ -136,7 +136,7 @@ void _showAddDialog(BuildContext context, AreasViewModel viewModel) {
         label: 'Área (m²)',
         initialValue: '',
         keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
       ),
       InsertDialog(key: 'location', label: 'Localização', initialValue: ''),
       InsertDialog(
@@ -144,7 +144,7 @@ void _showAddDialog(BuildContext context, AreasViewModel viewModel) {
         label: 'Canteiros',
         initialValue: '',
         keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
       ),
       InsertDialog(key: 'actions', label: 'Ações', initialValue: ''),
     ],
@@ -181,7 +181,7 @@ void _showUpdateDialog(
         label: 'Área (m²)',
         initialValue: model.area.toString(),
         keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
       ),
       UpdateDialog(
         key: 'location',
@@ -193,7 +193,7 @@ void _showUpdateDialog(
         label: 'Canteiros',
         initialValue: model.plat.toString(),
         keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
       ),
       UpdateDialog(
         key: 'actions',
