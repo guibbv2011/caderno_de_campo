@@ -23,6 +23,7 @@ class CultureServiceDatabase {
         join(await databaseFactory.getDatabasesPath(), _databaseName),
         options: OpenDatabaseOptions(
           version: 1,
+          singleInstance: false,
           onCreate: (db, version) async {
             await db.execute('''
             CREATE TABLE $_tableName (
