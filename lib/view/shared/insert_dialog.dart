@@ -22,7 +22,7 @@ class InsertDialog {
 
 void showInsertDialog<T>({
   required BuildContext context,
-  List<String>? list,
+  Set<List<String>>? lists,
   model,
   required String title,
   required List<InsertDialog> fields,

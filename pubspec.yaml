@@ -5,7 +5,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.9.0-333.2.beta
+  sdk: 3.10.0-75.1.beta
 
 dependencies:
   flutter:
@@ -23,12 +23,13 @@ dependencies:
   shared_preferences: ^2.5.3
   flutter_phoenix: ^1.1.1
   flutter_typeahead: ^5.2.0
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true

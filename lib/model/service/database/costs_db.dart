@@ -7,7 +7,7 @@ class CostsServiceDatabase {
   static const String _databaseName = 'costs.db';
   static const String _tableName = 'costs';
   static const String _id = 'id';
-  static const String _dateTime = 'date_time';
+  static const String _dateTime = 'datetime';
   static const String _area = 'area';
   static const String _category = 'category';
   static const String _description = 'description';

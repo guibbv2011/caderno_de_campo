@@ -20,7 +20,7 @@ class CostsModel {
   factory CostsModel.fromMap(Map<String, dynamic> map) {
     return CostsModel(
       id: map['id'],
-      dateTime: map['date_time'],
+      dateTime: map['datetime'],
       area: map['area'],
       category: map['category'],
       description: map['description'],
@@ -32,7 +32,7 @@ class CostsModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'date_time': dateTime,
+      'datetime': dateTime,
       'area': area,
       'category': category,
       'description': description,
@@ -43,7 +43,7 @@ class CostsModel {
 
   Map<String, dynamic> toMapForInsert() {
     return {
-      'date_time': dateTime,
+      'datetime': dateTime,
       'area': area,
       'category': category,
       'description': description,

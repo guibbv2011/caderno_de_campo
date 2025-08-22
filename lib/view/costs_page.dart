@@ -8,6 +8,7 @@ import 'package:caderno_do_campo/viewmodel/costs_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/list_titles_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class CostsPage extends StatefulWidget {
   const CostsPage({super.key});
@@ -22,7 +23,6 @@ class CostsPageState extends State<CostsPage> {
 
   @override
   void initState() {
-    super.initState();
     final databaseService = CostsServiceDatabase();
     final repository = CostsRepository(databaseService: databaseService);
     viewModel = CostsViewModel(costsRepository: repository);
@@ -32,9 +32,10 @@ class CostsPageState extends State<CostsPage> {
 
     viewModel.addListener(() => setState(() {}));
     viewModelTitles.addListener(() => setState(() {}));
+
     viewModel.fetchCostsCommand.execute();
-    // viewModelTitles.fetchCulturesTitlesCommand.execute();
     viewModelTitles.fetchAreasTitlesCommand.execute();
+    super.initState();
   }
 
   @override
@@ -134,7 +135,7 @@ class CostsPageState extends State<CostsPage> {
                 () => _showAddDialog(
                   context,
                   viewModel,
-                  viewModelTitles.listAreas,
+                  viewModelTitles.listAreas!,
                 ),
               );
             },
@@ -149,22 +150,20 @@ class CostsPageState extends State<CostsPage> {
 void _showAddDialog(
   BuildContext context,
   CostsViewModel viewModel,
-  List<String>? list,
+  List<String> list,
 ) {
-  // String? selectedValue;
-  for (String l in list!) {
-    debugPrint('List: ${l}');
-  }
+  final DateTime now = DateTime.now();
+  final DateFormat format = DateFormat('dd/MM/yyyy hh:mm');
 
   showInsertDialog<CostsModel>(
     context: context,
-    list: list,
+    lists: {list},
     title: 'Adicionar',
     fields: [
       InsertDialog(
-        key: 'dateTime',
+        key: 'datetime',
         label: 'Data',
-        initialValue: DateTime.now().toString(),
+        initialValue: format.format(now).toString(),
       ),
       InsertDialog(key: 'areacost', label: 'Área', initialValue: ''),
       InsertDialog(key: 'category', label: 'Categoria', initialValue: ''),
@@ -179,7 +178,7 @@ void _showAddDialog(
       InsertDialog(key: 'actions', label: 'Ações', initialValue: ''),
     ],
     modelBuilder: (cost) => CostsModel(
-      dateTime: DateTime.now().toString(),
+      dateTime: cost['datetime'],
       area: cost['area'] ?? '',
       category: cost['category'] ?? '',
       description: cost['description'] ?? '',
@@ -207,7 +206,7 @@ void _showUpdateDialog(
         enabled: false,
       ),
       UpdateDialog(
-        key: 'dateTime',
+        key: 'datetime',
         label: 'Data',
         initialValue: model.dateTime!.toString(),
       ),
@@ -237,7 +236,7 @@ void _showUpdateDialog(
     ],
     modelBuilder: (cost) => CostsModel(
       id: int.tryParse(cost['id']!),
-      dateTime: cost['dateTime']!,
+      dateTime: cost['datetime']!,
       area: cost['area']!,
       category: cost['category']!,
       description: cost['description']!,
