@@ -1,3 +1,4 @@
+import 'package:caderno_do_campo/model/location_model.dart';
 import 'package:caderno_do_campo/model/repository/api/weather_repository.dart';
 import 'package:caderno_do_campo/model/service/api/weather_api.dart';
 import 'package:caderno_do_campo/model/weather_model.dart';
@@ -8,48 +9,34 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WeatherPage extends StatefulWidget {
-  const WeatherPage({Key? key}) : super(key: key);
+  final LocationModel locate;
+  const WeatherPage({super.key, required this.locate});
   @override
   WeatherPageState createState() => WeatherPageState();
 }
 
 class WeatherPageState extends State<WeatherPage> {
-  late final WeatherViewModel viewWeather;
-  late final WeatherViewModel viewWeatherDays;
-
-  double _latitude = 0.0;
-  double _longitude = 0.0;
+  late WeatherViewModel viewWeather;
+  late WeatherViewModel viewWeatherDays;
 
   Future<void> savePage(int page) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('page', page);
   }
 
-  Future<void> _loadDoubles() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    _latitude = prefs.getDouble('latitude')!;
-    _longitude = prefs.getDouble('longitude')!;
-
-    // debugPrint('_lat: $_latitude');
-    // debugPrint('_long: $_longitude');
-    setState(() {});
-  }
-
   Future<void> weatherViews() async {
-    // debugPrint('_lat in watherview: $_latitude');
-    debugPrint('_lat in watherview: $_latitude');
-    if (_latitude == 0.0) {
-      savePage(5);
-    }
-    // debugPrint('_long in weatherview: $_longitude');
     final WeatherRepository weatherRepository = WeatherRepository(
-      weatherService: WeatherApiService(myLat: _latitude, myLong: _longitude),
+      weatherService: WeatherApiService(
+        myLat: widget.locate.latitude,
+        myLong: widget.locate.longitude,
+      ),
     );
 
     viewWeather = WeatherViewModel(weatherRepository: weatherRepository);
     viewWeatherDays = WeatherViewModel(weatherRepository: weatherRepository);
     viewWeather.addListener(() => setState(() {}));
     viewWeatherDays.addListener(() => setState(() {}));
+
     viewWeather.fetchCurrentWeatherCommand.execute();
     viewWeatherDays.fetchTwoDaysAfterWeatherCommand.execute();
 
@@ -58,7 +45,7 @@ class WeatherPageState extends State<WeatherPage> {
 
   @override
   void initState() {
-    _loadDoubles().whenComplete(() => weatherViews());
+    weatherViews();
     super.initState();
   }
 
@@ -66,6 +53,7 @@ class WeatherPageState extends State<WeatherPage> {
   void dispose() {
     viewWeather.removeListener(() => setState(() {}));
     viewWeatherDays.removeListener(() => setState(() {}));
+
     viewWeather.dispose();
     viewWeatherDays.dispose();
     super.dispose();
@@ -87,12 +75,7 @@ class WeatherPageState extends State<WeatherPage> {
               iconSize: 14.0,
               tooltip: 'Atualizar',
               onPressed: () {
-                if (_latitude == 0.0) {
-                  Phoenix.rebirth(context);
-                } else {
-                  viewWeather.fetchCurrentWeatherCommand.execute();
-                  viewWeatherDays.fetchTwoDaysAfterWeatherCommand.execute();
-                }
+                savePage(5).whenComplete(() => Phoenix.rebirth(context));
               },
             ),
           ),

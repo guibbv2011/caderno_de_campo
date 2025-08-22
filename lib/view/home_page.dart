@@ -1,3 +1,4 @@
+import 'package:caderno_do_campo/model/location_model.dart';
 import 'package:caderno_do_campo/model/repository/location/location_repository.dart';
 import 'package:caderno_do_campo/model/service/location/location_service.dart';
 import 'package:caderno_do_campo/view/areas_page.dart';
@@ -18,7 +19,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late LocationViewmodel viewLocate;
+  late LocationViewModel viewLocate;
   int _selectedIndex = 0;
 
   Future<void> savePage(int page) async {
@@ -32,6 +33,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {});
   }
 
+  LocationModel locate = LocationModel(0.0, 0.0);
+
   @override
   void initState() {
     loadPage().whenComplete(() {
@@ -39,14 +42,14 @@ class _MyHomePageState extends State<MyHomePage> {
         savePage(0);
       }
     });
-
     final locationService = LocationService();
     final locationRepository = LocationRepository(
       locationService: locationService,
     );
-    viewLocate = LocationViewmodel(locationRepository: locationRepository);
+    viewLocate = LocationViewModel(locationRepository: locationRepository);
     viewLocate.addListener(() => setState(() {}));
     viewLocate.fetchLocationCommand.execute();
+
     super.initState();
   }
 
@@ -59,22 +62,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _changePage(int indexPage) {
     setState(() {
-      viewLocate.fetchLocationCommand.execute();
       _selectedIndex = indexPage;
     });
   }
 
-  final List<Widget> _pages = [
+  List<Widget> get _pages => [
     OverviewPage(),
     RegistersPage(),
     CulturesPage(),
     AreasPage(),
     CostsPage(),
-    WeatherPage(),
+    WeatherPage(locate: viewLocate.location ?? LocationModel(0.0, 0.0)),
   ];
 
   @override
   Widget build(BuildContext context) {
+    if (_selectedIndex == 5 && viewLocate.isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
