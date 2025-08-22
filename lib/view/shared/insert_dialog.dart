@@ -34,10 +34,10 @@ void showInsertDialog<T>({
     controllers[field.key] = TextEditingController(text: field.initialValue);
   }
 
-  // String? selectedValue;
   ValueNotifier<TextEditingController> areaValue =
       ValueNotifier<TextEditingController>(TextEditingController(text: ''));
-
+  ValueNotifier<TextEditingController> cultureValue =
+      ValueNotifier<TextEditingController>(TextEditingController(text: ''));
   showDialog(
     context: context,
     builder: (context) {
@@ -47,7 +47,7 @@ void showInsertDialog<T>({
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: fields.map((field) {
-              if (field.key == 'areacost' && areaValue.value.text == '') {
+              if (field.key == 'arearegister' || field.key == 'areacost') {
                 return TypeAheadField<String>(
                   builder: (context, controller, focusNode) {
                     return TextField(
@@ -55,25 +55,78 @@ void showInsertDialog<T>({
                       focusNode: focusNode,
                       autofocus: true,
                       decoration: InputDecoration(
-                        border: OutlineInputBorder(),
+                        border: UnderlineInputBorder(),
                         labelText: 'Area',
+                        labelStyle: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                        ),
                       ),
                     );
                   },
                   itemBuilder: (context, String suggestions) {
-                    return ListTile(title: Text(suggestions));
+                    return ListTile(
+                      title: Text(suggestions),
+                      splashColor: Colors.grey,
+                      hoverColor: Colors.grey.shade500,
+                      tileColor: Colors.black,
+                      shape: BorderDirectional(
+                        bottom: BorderSide(color: Colors.grey, width: 1.0),
+                      ),
+                    );
                   },
                   onSelected: (value) {
                     areaValue.value.text = value;
                   },
                   suggestionsCallback: (String search) {
-                    return list;
+                    return lists!.first;
+                  },
+                );
+              } else if (field.key == 'cultureregister') {
+                return TypeAheadField<String>(
+                  builder: (context, controller, focusNode) {
+                    return TextField(
+                      controller: cultureValue.value,
+                      focusNode: focusNode,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Cultura',
+                        labelStyle: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    );
+                  },
+                  itemBuilder: (context, String suggestions) {
+                    return ListTile(
+                      title: Text(suggestions),
+                      splashColor: Colors.grey,
+                      hoverColor: Colors.grey.shade500,
+                      tileColor: Colors.black,
+                      shape: BorderDirectional(
+                        bottom: BorderSide(color: Colors.grey, width: 1.0),
+                      ),
+                    );
+                  },
+                  onSelected: (value) {
+                    cultureValue.value.text = value;
+                  },
+                  suggestionsCallback: (String search) {
+                    return lists!.last;
                   },
                 );
               } else {
                 return TextField(
                   controller: controllers[field.key],
-                  decoration: InputDecoration(labelText: field.label),
+                  decoration: InputDecoration(
+                    labelText: field.label,
+                    labelStyle: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 12,
+                    ),
+                  ),
                   enabled: field.enabled,
                   keyboardType: field.keyboardType,
                   inputFormatters: [],
@@ -95,13 +148,19 @@ void showInsertDialog<T>({
                   values['area'] = areaValue.value.text.isNotEmpty
                       ? areaValue.value.text
                       : '';
+                } else if (field.key == 'arearegister') {
+                  values['area'] = areaValue.value.text.isNotEmpty
+                      ? areaValue.value.text
+                      : '';
+                } else if (field.key == 'cultureregister') {
+                  values['culture'] = cultureValue.value.text.isNotEmpty
+                      ? cultureValue.value.text
+                      : '';
                 } else {
                   final text = controllers[field.key]!.text;
                   values[field.key] = text.isNotEmpty ? text : '';
                 }
               }
-
-              debugPrint('OK 0: ${values}');
 
               final insertModel = modelBuilder(values);
               onInsert(insertModel);

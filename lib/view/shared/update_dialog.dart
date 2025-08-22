@@ -1,4 +1,3 @@
-// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -9,7 +8,6 @@ class UpdateDialog {
   final bool enabled;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
-  // final int? maxLines;
 
   UpdateDialog({
     required this.key,
@@ -18,7 +16,6 @@ class UpdateDialog {
     this.enabled = true,
     this.keyboardType,
     this.inputFormatters,
-    // this.maxLines = 1,
   });
 }
 
@@ -30,7 +27,6 @@ void showUpdateDialog<T>({
   required T Function(Map<String, String> values) modelBuilder,
   required void Function(T) onUpdate,
 }) {
-  // Create controllers dynamically from fields
   final controllers = <String, TextEditingController>{};
   for (var field in fields) {
     controllers[field.key] = TextEditingController(text: field.initialValue);
@@ -50,7 +46,6 @@ void showUpdateDialog<T>({
               enabled: field.enabled,
               keyboardType: field.keyboardType,
               inputFormatters: field.inputFormatters ?? [],
-              // maxLines: field.maxLines,
             );
           }).toList(),
         ),
@@ -62,22 +57,16 @@ void showUpdateDialog<T>({
         ),
         IconButton(
           onPressed: () {
-            // Collect updated values into a map
             final values = <String, String>{};
             for (var field in fields) {
               final text = controllers[field.key]!.text;
-              values[field.key] = text.isNotEmpty
-                  ? text
-                  : ''; // Handle empty as ''
+              values[field.key] = text.isNotEmpty ? text : '';
             }
 
-            // Build the updated model
             final updatedModel = modelBuilder(values);
 
-            // Call the update callback
             onUpdate(updatedModel);
 
-            // Close the dialog
             Navigator.pop(context);
           },
           icon: const Icon(Icons.cached_outlined),
