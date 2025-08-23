@@ -1,7 +1,6 @@
 import 'package:caderno_do_campo/model/location_model.dart';
 import 'package:caderno_do_campo/model/repository/database/costs_repository.dart';
 import 'package:caderno_do_campo/model/repository/database/cultures_repository.dart';
-import 'package:caderno_do_campo/model/repository/database/list_titles_repository.dart';
 import 'package:caderno_do_campo/model/repository/database/registers_repository.dart';
 import 'package:caderno_do_campo/model/repository/location/location_repository.dart';
 import 'package:caderno_do_campo/model/service/database/costs_db.dart';
@@ -17,7 +16,6 @@ import 'package:caderno_do_campo/view/weather_page.dart';
 import 'package:caderno_do_campo/viewmodel/areas_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/costs_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/cultures_viewmodel.dart';
-import 'package:caderno_do_campo/viewmodel/list_titles_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/location_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/registers_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +34,6 @@ class _MyHomePageState extends State<MyHomePage> {
   late AreasViewModel viewAreasModel;
   late final CulturesViewModel viewCulturesModel;
   late final CostsViewModel viewCostsModel;
-  late final ListTitlesViewModel viewModelTitles;
   late final RegistersViewModel viewRegistersModel;
   int _selectedIndex = 0;
 
@@ -73,12 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
       databaseService: databaseCostsService,
     );
     viewCostsModel = CostsViewModel(costsRepository: costsRepository);
-    final listRepository = ListTitlesRepository();
-    viewModelTitles = ListTitlesViewModel(listTitleRepository: listRepository);
     viewCostsModel.addListener(() => setState(() {}));
-    viewModelTitles.addListener(() => setState(() {}));
     viewCostsModel.fetchCostsCommand.execute();
-    viewModelTitles.fetchAreasTitlesCommand.execute();
 
     final databaseRegistersService = RegistersServiceDatabase();
     final registersRepository = RegistersRepository(
@@ -104,11 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
     viewCulturesModel.dispose();
 
     viewCostsModel.removeListener(() => setState(() {}));
-    viewModelTitles.removeListener(() => setState(() {}));
     viewCostsModel.dispose();
-    viewModelTitles.dispose();
 
-    viewRegistersModel.removeListener(() => setState(() {}));
     viewRegistersModel.dispose();
     super.dispose();
   }
