@@ -1,6 +1,6 @@
 import 'package:caderno_do_campo/model/areas_model.dart';
-import 'package:caderno_do_campo/model/repository/database/areas_repository.dart';
-import 'package:caderno_do_campo/model/service/database/areas_db.dart';
+// import 'package:caderno_do_campo/model/repository/database/areas_repository.dart';
+// import 'package:caderno_do_campo/model/service/database/areas_db.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/areas_viewmodel.dart';
@@ -8,37 +8,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AreasPage extends StatefulWidget {
-  const AreasPage({super.key});
+  final AreasViewModel viewModel;
+  const AreasPage({super.key, required this.viewModel});
 
   @override
   AreasPageState createState() => AreasPageState();
 }
 
 class AreasPageState extends State<AreasPage> {
-  late final AreasViewModel viewModel;
+  // late final AreasViewModel viewModel;
 
   @override
   void initState() {
     super.initState();
-    final databaseService = AreasServiceDatabase();
-    final repository = AreasRepository(databaseService: databaseService);
-    viewModel = AreasViewModel(areasRepository: repository);
+    // import 'package:caderno_do_campo/model/repository/database/areas_repository.dart';
+    // import 'package:caderno_do_campo/model/service/database/areas_db.dart';
+    // late final AreasViewModel viewModel;
+    // final databaseService = AreasServiceDatabase();
+    // final repository = AreasRepository(databaseService: databaseService);
+    // viewModel = AreasViewModel(areasRepository: repository);
 
-    viewModel.addListener(() => setState(() {}));
-    viewModel.fetchAreasCommand.execute();
+    widget.viewModel.addListener(() => setState(() {}));
+    widget.viewModel.fetchAreasCommand.execute();
   }
 
   @override
   void dispose() {
-    viewModel.removeListener(() => setState(() {}));
-    viewModel.dispose();
+    widget.viewModel.removeListener(() => setState(() {}));
+    widget.viewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: viewModel,
+      animation: widget.viewModel,
       builder: (context, child) {
         return Scaffold(
           appBar: AppBar(
@@ -51,16 +55,16 @@ class AreasPageState extends State<AreasPage> {
                   iconSize: 14.0,
                   tooltip: 'Remover tudo',
                   onPressed: () {
-                    viewModel.onDeleteAll();
+                    widget.viewModel.onDeleteAll();
                   },
                 ),
               ),
             ],
           ),
           body: ListView.builder(
-            itemCount: viewModel.areas.length,
+            itemCount: widget.viewModel.areas.length,
             itemBuilder: (context, index) {
-              final area = viewModel.areas[index];
+              final area = widget.viewModel.areas[index];
               return Padding(
                 padding: const EdgeInsets.only(
                   top: 10.0,
@@ -88,14 +92,18 @@ class AreasPageState extends State<AreasPage> {
                                 iconSize: 14,
                                 icon: Icon(Icons.edit),
                                 onPressed: () {
-                                  _showUpdateDialog(context, area, viewModel);
+                                  _showUpdateDialog(
+                                    context,
+                                    area,
+                                    widget.viewModel,
+                                  );
                                 },
                               ),
                               IconButton(
                                 iconSize: 14,
                                 icon: Icon(Icons.delete),
                                 onPressed: () {
-                                  viewModel.onDelete(area.id!);
+                                  widget.viewModel.onDelete(area.id!);
                                 },
                               ),
                             ],
@@ -115,7 +123,7 @@ class AreasPageState extends State<AreasPage> {
           floatingActionButton: FloatingActionButton(
             mini: true,
             onPressed: () {
-              _showAddDialog(context, viewModel);
+              _showAddDialog(context, widget.viewModel);
             },
             child: Icon(Icons.add),
           ),

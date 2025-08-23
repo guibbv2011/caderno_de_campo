@@ -1,31 +1,32 @@
 import 'package:caderno_do_campo/model/registers_model.dart';
 import 'package:caderno_do_campo/model/repository/database/list_titles_repository.dart';
-import 'package:caderno_do_campo/model/repository/database/registers_repository.dart';
-import 'package:caderno_do_campo/model/service/database/registers_db.dart';
+// import 'package:caderno_do_campo/model/repository/database/registers_repository.dart';
+// import 'package:caderno_do_campo/model/service/database/registers_db.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/list_titles_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/registers_viewmodel.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class RegistersPage extends StatefulWidget {
-  const RegistersPage({super.key});
+  final RegistersViewModel viewModel;
+  const RegistersPage({super.key, required this.viewModel});
   @override
   RegistersPageState createState() => RegistersPageState();
 }
 
 class RegistersPageState extends State<RegistersPage> {
-  late final RegistersViewModel viewModel;
+  // late final RegistersViewModel viewModel;
   late final ListTitlesViewModel viewModelAreaTitles;
   late final ListTitlesViewModel viewModelCultureTitles;
 
   @override
   void initState() {
-    final databaseService = RegistersServiceDatabase();
-    final repository = RegistersRepository(databaseService: databaseService);
-    viewModel = RegistersViewModel(registersRepository: repository);
+    // final databaseService = RegistersServiceDatabase();
+    // final repository = RegistersRepository(databaseService: databaseService);
+    // viewModel = RegistersViewModel(registersRepository: repository);
 
     final listRepository = ListTitlesRepository();
     viewModelAreaTitles = ListTitlesViewModel(
@@ -35,7 +36,11 @@ class RegistersPageState extends State<RegistersPage> {
       listTitleRepository: listRepository,
     );
 
-    viewModel.fetchRegistersCommand.execute();
+    widget.viewModel.addListener(() => setState(() {}));
+    viewModelAreaTitles.addListener(() => setState(() {}));
+    viewModelCultureTitles.addListener(() => setState(() {}));
+
+    widget.viewModel.fetchRegistersCommand.execute();
     viewModelAreaTitles.fetchAreasTitlesCommand.execute();
     viewModelCultureTitles.fetchCulturesTitlesCommand.execute();
     super.initState();
@@ -43,11 +48,11 @@ class RegistersPageState extends State<RegistersPage> {
 
   @override
   void dispose() {
-    viewModel.removeListener(() => setState(() {}));
+    widget.viewModel.removeListener(() => setState(() {}));
     viewModelAreaTitles.removeListener(() => setState(() {}));
     viewModelCultureTitles.removeListener(() => setState(() {}));
 
-    viewModel.dispose();
+    widget.viewModel.dispose();
     viewModelAreaTitles.dispose();
     viewModelCultureTitles.dispose();
     super.dispose();
@@ -56,7 +61,7 @@ class RegistersPageState extends State<RegistersPage> {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: viewModel,
+      animation: widget.viewModel,
       builder: (context, child) {
         return Scaffold(
           appBar: AppBar(
@@ -69,16 +74,16 @@ class RegistersPageState extends State<RegistersPage> {
                   iconSize: 14.0,
                   tooltip: 'Remover tudo',
                   onPressed: () {
-                    viewModel.onDeleteAll();
+                    widget.viewModel.onDeleteAll();
                   },
                 ),
               ),
             ],
           ),
           body: ListView.builder(
-            itemCount: viewModel.registers.length,
+            itemCount: widget.viewModel.registers.length,
             itemBuilder: (context, index) {
-              final register = viewModel.registers[index];
+              final register = widget.viewModel.registers[index];
               return Padding(
                 padding: const EdgeInsets.only(
                   top: 10.0,
@@ -112,7 +117,7 @@ class RegistersPageState extends State<RegistersPage> {
                                   _showUpdateDialog(
                                     context,
                                     register,
-                                    viewModel,
+                                    widget.viewModel,
                                   );
                                 },
                               ),
@@ -120,7 +125,7 @@ class RegistersPageState extends State<RegistersPage> {
                                 iconSize: 14,
                                 icon: Icon(Icons.delete),
                                 onPressed: () {
-                                  viewModel.onDelete(register.id!);
+                                  widget.viewModel.onDelete(register.id!);
                                 },
                               ),
                             ],
@@ -149,7 +154,7 @@ class RegistersPageState extends State<RegistersPage> {
                         .whenComplete(
                           () => _showAddDialog(
                             context,
-                            viewModel,
+                            widget.viewModel,
                             viewModelAreaTitles.listAreas!,
                             viewModelCultureTitles.listCultures!,
                           ),

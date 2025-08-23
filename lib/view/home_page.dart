@@ -1,5 +1,12 @@
 import 'package:caderno_do_campo/model/location_model.dart';
+import 'package:caderno_do_campo/model/repository/database/costs_repository.dart';
+import 'package:caderno_do_campo/model/repository/database/cultures_repository.dart';
+import 'package:caderno_do_campo/model/repository/database/list_titles_repository.dart';
+import 'package:caderno_do_campo/model/repository/database/registers_repository.dart';
 import 'package:caderno_do_campo/model/repository/location/location_repository.dart';
+import 'package:caderno_do_campo/model/service/database/costs_db.dart';
+import 'package:caderno_do_campo/model/service/database/culture_db.dart';
+import 'package:caderno_do_campo/model/service/database/registers_db.dart';
 import 'package:caderno_do_campo/model/service/location/location_service.dart';
 import 'package:caderno_do_campo/view/areas_page.dart';
 import 'package:caderno_do_campo/view/costs_page.dart';
@@ -7,9 +14,16 @@ import 'package:caderno_do_campo/view/cultures_page.dart';
 import 'package:caderno_do_campo/view/overview_page.dart';
 import 'package:caderno_do_campo/view/registers_page.dart';
 import 'package:caderno_do_campo/view/weather_page.dart';
+import 'package:caderno_do_campo/viewmodel/areas_viewmodel.dart';
+import 'package:caderno_do_campo/viewmodel/costs_viewmodel.dart';
+import 'package:caderno_do_campo/viewmodel/cultures_viewmodel.dart';
+import 'package:caderno_do_campo/viewmodel/list_titles_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/location_viewmodel.dart';
+import 'package:caderno_do_campo/viewmodel/registers_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:caderno_do_campo/model/repository/database/areas_repository.dart';
+import 'package:caderno_do_campo/model/service/database/areas_db.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -20,6 +34,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late LocationViewModel viewLocate;
+  late AreasViewModel viewAreasModel;
+  late final CulturesViewModel viewCulturesModel;
+  late final CostsViewModel viewCostsModel;
+  late final ListTitlesViewModel viewModelTitles;
+  late final RegistersViewModel viewRegistersModel;
   int _selectedIndex = 0;
 
   Future<void> savePage(int page) async {
@@ -32,8 +51,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _selectedIndex = prefs.getInt('page')!;
     setState(() {});
   }
-
-  LocationModel locate = LocationModel(0.0, 0.0);
 
   @override
   void initState() {
@@ -50,6 +67,45 @@ class _MyHomePageState extends State<MyHomePage> {
     viewLocate.addListener(() => setState(() {}));
     viewLocate.fetchLocationCommand.execute();
 
+    final databaseAreasService = AreasServiceDatabase();
+    final areasRepository = AreasRepository(
+      databaseService: databaseAreasService,
+    );
+    viewAreasModel = AreasViewModel(areasRepository: areasRepository);
+    viewAreasModel.addListener(() => setState(() {}));
+    viewAreasModel.fetchAreasCommand.execute();
+
+    final databaseCultureService = CultureServiceDatabase();
+    final culturesRepository = CulturesRepository(
+      databaseService: databaseCultureService,
+    );
+    viewCulturesModel = CulturesViewModel(
+      culturesRepository: culturesRepository,
+    );
+    viewCulturesModel.addListener(() => setState(() {}));
+    viewCulturesModel.fetchCulturesCommand.execute();
+
+    final databaseCostsService = CostsServiceDatabase();
+    final costsRepository = CostsRepository(
+      databaseService: databaseCostsService,
+    );
+    viewCostsModel = CostsViewModel(costsRepository: costsRepository);
+    final listRepository = ListTitlesRepository();
+    viewModelTitles = ListTitlesViewModel(listTitleRepository: listRepository);
+    viewCostsModel.addListener(() => setState(() {}));
+    viewModelTitles.addListener(() => setState(() {}));
+    viewCostsModel.fetchCostsCommand.execute();
+    viewModelTitles.fetchAreasTitlesCommand.execute();
+
+    final databaseRegistersService = RegistersServiceDatabase();
+    final registersRepository = RegistersRepository(
+      databaseService: databaseRegistersService,
+    );
+    viewRegistersModel = RegistersViewModel(
+      registersRepository: registersRepository,
+    );
+    viewRegistersModel.addListener(() => setState(() {}));
+    viewRegistersModel.fetchRegistersCommand.execute();
     super.initState();
   }
 
@@ -57,6 +113,21 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     viewLocate.removeListener(() => setState(() => {}));
     viewLocate.dispose();
+
+    viewAreasModel.removeListener(() => setState(() {}));
+    viewAreasModel.dispose();
+
+    viewCulturesModel.removeListener(() => setState(() {}));
+    viewCulturesModel.dispose();
+
+    viewCostsModel.removeListener(() => setState(() {}));
+    viewModelTitles.removeListener(() => setState(() {}));
+    viewCostsModel.dispose();
+    viewModelTitles.dispose();
+
+    viewRegistersModel.removeListener(() => setState(() {}));
+    viewRegistersModel.dispose();
+
     super.dispose();
   }
 
@@ -68,10 +139,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Widget> get _pages => [
     OverviewPage(),
-    RegistersPage(),
-    CulturesPage(),
-    AreasPage(),
-    CostsPage(),
+    RegistersPage(viewModel: viewRegistersModel),
+    CulturesPage(viewModel: viewCulturesModel),
+    AreasPage(viewModel: viewAreasModel),
+    CostsPage(viewModel: viewCostsModel),
     WeatherPage(locate: viewLocate.location ?? LocationModel(0.0, 0.0)),
   ];
 

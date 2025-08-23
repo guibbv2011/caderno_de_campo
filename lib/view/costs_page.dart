@@ -1,7 +1,7 @@
 import 'package:caderno_do_campo/model/costs_model.dart';
-import 'package:caderno_do_campo/model/repository/database/costs_repository.dart';
+// import 'package:caderno_do_campo/model/repository/database/costs_repository.dart';
 import 'package:caderno_do_campo/model/repository/database/list_titles_repository.dart';
-import 'package:caderno_do_campo/model/service/database/costs_db.dart';
+// import 'package:caderno_do_campo/model/service/database/costs_db.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/costs_viewmodel.dart';
@@ -11,38 +11,46 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class CostsPage extends StatefulWidget {
-  const CostsPage({super.key});
+  final CostsViewModel viewModel;
+  // final ListTitlesViewModel viewModelTitles;
+  const CostsPage({
+    super.key,
+    required this.viewModel,
+    // required this.viewModelTitles,
+  });
 
   @override
   CostsPageState createState() => CostsPageState();
 }
 
 class CostsPageState extends State<CostsPage> {
-  late final CostsViewModel viewModel;
+  // late final CostsViewModel viewModel;
   late final ListTitlesViewModel viewModelTitles;
 
   @override
   void initState() {
-    final databaseService = CostsServiceDatabase();
-    final repository = CostsRepository(databaseService: databaseService);
-    viewModel = CostsViewModel(costsRepository: repository);
-
+    // late final CostsViewModel viewModel;
+    // late final ListTitlesViewModel viewModelTitles;
+    // final databaseService = CostsServiceDatabase();
+    // final repository = CostsRepository(databaseService: databaseService);
+    // viewModel = CostsViewModel(costsRepository: repository);
+    //
     final listRepository = ListTitlesRepository();
     viewModelTitles = ListTitlesViewModel(listTitleRepository: listRepository);
 
-    viewModel.addListener(() => setState(() {}));
+    widget.viewModel.addListener(() => setState(() {}));
     viewModelTitles.addListener(() => setState(() {}));
 
-    viewModel.fetchCostsCommand.execute();
+    widget.viewModel.fetchCostsCommand.execute();
     viewModelTitles.fetchAreasTitlesCommand.execute();
     super.initState();
   }
 
   @override
   void dispose() {
-    viewModel.removeListener(() => setState(() {}));
+    widget.viewModel.removeListener(() => setState(() {}));
     viewModelTitles.removeListener(() => setState(() {}));
-    viewModel.dispose();
+    widget.viewModel.dispose();
     viewModelTitles.dispose();
     super.dispose();
   }
@@ -50,7 +58,7 @@ class CostsPageState extends State<CostsPage> {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: viewModel,
+      animation: widget.viewModel,
       builder: (context, child) {
         return Scaffold(
           appBar: AppBar(
@@ -63,16 +71,16 @@ class CostsPageState extends State<CostsPage> {
                   iconSize: 14.0,
                   tooltip: 'Remover tudo',
                   onPressed: () {
-                    viewModel.onDeleteAll();
+                    widget.viewModel.onDeleteAll();
                   },
                 ),
               ),
             ],
           ),
           body: ListView.builder(
-            itemCount: viewModel.costs.length,
+            itemCount: widget.viewModel.costs.length,
             itemBuilder: (context, index) {
-              final cost = viewModel.costs[index];
+              final cost = widget.viewModel.costs[index];
               return Padding(
                 padding: const EdgeInsets.only(
                   top: 10.0,
@@ -103,14 +111,18 @@ class CostsPageState extends State<CostsPage> {
                                 iconSize: 14,
                                 icon: Icon(Icons.edit),
                                 onPressed: () {
-                                  _showUpdateDialog(context, cost, viewModel);
+                                  _showUpdateDialog(
+                                    context,
+                                    cost,
+                                    widget.viewModel,
+                                  );
                                 },
                               ),
                               IconButton(
                                 iconSize: 14,
                                 icon: Icon(Icons.delete),
                                 onPressed: () {
-                                  viewModel.onDelete(cost.id!);
+                                  widget.viewModel.onDelete(cost.id!);
                                 },
                               ),
                             ],
@@ -134,7 +146,7 @@ class CostsPageState extends State<CostsPage> {
               viewModelTitles.fetchAreasTitlesCommand.execute().whenComplete(
                 () => _showAddDialog(
                   context,
-                  viewModel,
+                  widget.viewModel,
                   viewModelTitles.listAreas!,
                 ),
               );

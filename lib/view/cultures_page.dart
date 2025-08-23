@@ -1,6 +1,6 @@
 import 'package:caderno_do_campo/model/cultures_model.dart';
-import 'package:caderno_do_campo/model/repository/database/cultures_repository.dart';
-import 'package:caderno_do_campo/model/service/database/culture_db.dart';
+// import 'package:caderno_do_campo/model/repository/database/cultures_repository.dart';
+// import 'package:caderno_do_campo/model/service/database/culture_db.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/cultures_viewmodel.dart';
@@ -8,39 +8,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CulturesPage extends StatefulWidget {
-  const CulturesPage({super.key});
+  final CulturesViewModel viewModel;
+  const CulturesPage({super.key, required this.viewModel});
 
   @override
   CulturesPageState createState() => CulturesPageState();
 }
 
 class CulturesPageState extends State<CulturesPage> {
-  late final CulturesViewModel viewModel;
-
   @override
   void initState() {
     super.initState();
 
-    final databaseService = CultureServiceDatabase();
-    final repository = CulturesRepository(databaseService: databaseService);
+    // late final CulturesViewModel viewModel;
+    // final databaseService = CultureServiceDatabase();
+    // final repository = CulturesRepository(databaseService: databaseService);
+    //
+    // viewModel = CulturesViewModel(culturesRepository: repository);
 
-    viewModel = CulturesViewModel(culturesRepository: repository);
-
-    viewModel.addListener(() => setState(() {}));
-    viewModel.fetchCulturesCommand.execute();
+    widget.viewModel.addListener(() => setState(() {}));
+    widget.viewModel.fetchCulturesCommand.execute();
   }
 
   @override
   void dispose() {
-    viewModel.removeListener(() => setState(() {}));
-    viewModel.dispose();
+    widget.viewModel.removeListener(() => setState(() {}));
+    widget.viewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: viewModel,
+      animation: widget.viewModel,
       builder: (context, child) {
         return Scaffold(
           appBar: AppBar(
@@ -53,16 +53,16 @@ class CulturesPageState extends State<CulturesPage> {
                   iconSize: 14.0,
                   tooltip: 'Remover tudo',
                   onPressed: () {
-                    viewModel.deleteAllCulturesCommand.execute();
+                    widget.viewModel.deleteAllCulturesCommand.execute();
                   },
                 ),
               ),
             ],
           ),
           body: ListView.builder(
-            itemCount: viewModel.cultures.length,
+            itemCount: widget.viewModel.cultures.length,
             itemBuilder: (context, index) {
-              final culture = viewModel.cultures[index];
+              final culture = widget.viewModel.cultures[index];
               return Padding(
                 padding: const EdgeInsets.only(
                   top: 10.0,
@@ -96,7 +96,7 @@ class CulturesPageState extends State<CulturesPage> {
                                   _showUpdateDialog(
                                     context,
                                     culture,
-                                    viewModel,
+                                    widget.viewModel,
                                   );
                                 },
                               ),
@@ -104,7 +104,7 @@ class CulturesPageState extends State<CulturesPage> {
                                 iconSize: 14,
                                 icon: Icon(Icons.delete),
                                 onPressed: () {
-                                  viewModel.onDelete(culture.id!);
+                                  widget.viewModel.onDelete(culture.id!);
                                 },
                               ),
                             ],
@@ -124,7 +124,7 @@ class CulturesPageState extends State<CulturesPage> {
           floatingActionButton: FloatingActionButton(
             mini: true,
             onPressed: () {
-              _showAddDialog(context, viewModel);
+              _showAddDialog(context, widget.viewModel);
             },
             child: Icon(Icons.add),
           ),
