@@ -110,7 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     viewRegistersModel.removeListener(() => setState(() {}));
     viewRegistersModel.dispose();
-
     super.dispose();
   }
 
@@ -121,7 +120,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<Widget> get _pages => [
-    OverviewPage(),
+    OverviewPage(
+      registersViewModel: viewRegistersModel,
+      areasViewModel: viewAreasModel,
+      costsViewModel: viewCostsModel,
+      culturesViewModel: viewCulturesModel,
+      onJumpToRegisters: () => _changePage(1),
+      onJumpToCultures: () => _changePage(2),
+      onJumpToAreas: () => _changePage(3),
+      onJumpToCosts: () => _changePage(4),
+    ),
     RegistersPage(viewModel: viewRegistersModel),
     CulturesPage(viewModel: viewCulturesModel),
     AreasPage(viewModel: viewAreasModel),
@@ -131,9 +139,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_selectedIndex == 5 && viewLocate.isLoading) {
-      return Center(child: CircularProgressIndicator());
-    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
