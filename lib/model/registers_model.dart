@@ -1,6 +1,3 @@
-// import 'package:caderno_do_campo/model/areas_model.dart';
-// import 'package:caderno_do_campo/model/cultures_model.dart';
-
 class RegistersModel {
   final int? id;
   final String? dateTime;

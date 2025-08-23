@@ -1,6 +1,4 @@
 import 'package:caderno_do_campo/model/cultures_model.dart';
-// import 'package:caderno_do_campo/model/repository/database/cultures_repository.dart';
-// import 'package:caderno_do_campo/model/service/database/culture_db.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/cultures_viewmodel.dart';
@@ -18,16 +16,9 @@ class CulturesPage extends StatefulWidget {
 class CulturesPageState extends State<CulturesPage> {
   @override
   void initState() {
-    super.initState();
-
-    // late final CulturesViewModel viewModel;
-    // final databaseService = CultureServiceDatabase();
-    // final repository = CulturesRepository(databaseService: databaseService);
-    //
-    // viewModel = CulturesViewModel(culturesRepository: repository);
-
     widget.viewModel.addListener(() => setState(() {}));
     widget.viewModel.fetchCulturesCommand.execute();
+    super.initState();
   }
 
   @override

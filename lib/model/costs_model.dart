@@ -1,8 +1,8 @@
 class CostsModel {
   int? id;
-  String? dateTime; // DateTime
+  String? dateTime;
   String? area;
-  String? category; // Insumo | operacional | fixo
+  String? category;
   String? description;
   double? value;
   String? actions;

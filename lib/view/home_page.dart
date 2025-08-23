@@ -21,7 +21,6 @@ import 'package:caderno_do_campo/viewmodel/list_titles_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/location_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/registers_viewmodel.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:caderno_do_campo/model/repository/database/areas_repository.dart';
 import 'package:caderno_do_campo/model/service/database/areas_db.dart';
 
@@ -41,24 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
   late final RegistersViewModel viewRegistersModel;
   int _selectedIndex = 0;
 
-  Future<void> savePage(int page) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('page', page);
-  }
-
-  Future<void> loadPage() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    _selectedIndex = prefs.getInt('page')!;
-    setState(() {});
-  }
-
   @override
   void initState() {
-    loadPage().whenComplete(() {
-      if (_selectedIndex == 5) {
-        savePage(0);
-      }
-    });
     final locationService = LocationService();
     final locationRepository = LocationRepository(
       locationService: locationService,

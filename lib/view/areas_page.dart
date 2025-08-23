@@ -1,6 +1,4 @@
 import 'package:caderno_do_campo/model/areas_model.dart';
-// import 'package:caderno_do_campo/model/repository/database/areas_repository.dart';
-// import 'package:caderno_do_campo/model/service/database/areas_db.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/areas_viewmodel.dart';
@@ -16,20 +14,11 @@ class AreasPage extends StatefulWidget {
 }
 
 class AreasPageState extends State<AreasPage> {
-  // late final AreasViewModel viewModel;
-
   @override
   void initState() {
-    super.initState();
-    // import 'package:caderno_do_campo/model/repository/database/areas_repository.dart';
-    // import 'package:caderno_do_campo/model/service/database/areas_db.dart';
-    // late final AreasViewModel viewModel;
-    // final databaseService = AreasServiceDatabase();
-    // final repository = AreasRepository(databaseService: databaseService);
-    // viewModel = AreasViewModel(areasRepository: repository);
-
     widget.viewModel.addListener(() => setState(() {}));
     widget.viewModel.fetchAreasCommand.execute();
+    super.initState();
   }
 
   @override

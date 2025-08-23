@@ -5,7 +5,6 @@ import 'package:caderno_do_campo/model/service/database/culture_db.dart';
 import 'package:caderno_do_campo/model/service/database/registers_db.dart';
 import 'package:caderno_do_campo/view/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() async {
@@ -21,7 +20,7 @@ void main() async {
   await CultureServiceDatabase().open();
   await RegistersServiceDatabase().open();
 
-  runApp(Phoenix(child: MyApp()));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

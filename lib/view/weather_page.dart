@@ -3,10 +3,8 @@ import 'package:caderno_do_campo/model/repository/api/weather_repository.dart';
 import 'package:caderno_do_campo/model/service/api/weather_api.dart';
 import 'package:caderno_do_campo/model/weather_model.dart';
 import 'package:caderno_do_campo/viewmodel/weather_viewmodel.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class WeatherPage extends StatefulWidget {
   final LocationModel locate;
@@ -18,11 +16,7 @@ class WeatherPage extends StatefulWidget {
 class WeatherPageState extends State<WeatherPage> {
   late WeatherViewModel viewWeather;
   late WeatherViewModel viewWeatherDays;
-
-  Future<void> savePage(int page) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('page', page);
-  }
+  late ValueNotifier<List<WeatherViewModel>> weather;
 
   Future<void> weatherViews() async {
     final WeatherRepository weatherRepository = WeatherRepository(
@@ -37,8 +31,12 @@ class WeatherPageState extends State<WeatherPage> {
     viewWeather.addListener(() => setState(() {}));
     viewWeatherDays.addListener(() => setState(() {}));
 
-    viewWeather.fetchCurrentWeatherCommand.execute();
-    viewWeatherDays.fetchTwoDaysAfterWeatherCommand.execute();
+    if (widget.locate.latitude != 0.0 && widget.locate.longitude != 0.0) {
+      viewWeather.fetchCurrentWeatherCommand.execute();
+      viewWeatherDays.fetchTwoDaysAfterWeatherCommand.execute();
+    }
+
+    weather = ValueNotifier([viewWeather, viewWeatherDays]);
 
     setState(() {});
   }
@@ -61,9 +59,6 @@ class WeatherPageState extends State<WeatherPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (viewWeather.isLoading == true) {
-      return const Center(child: CircularProgressIndicator());
-    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tempo'),
@@ -75,7 +70,7 @@ class WeatherPageState extends State<WeatherPage> {
               iconSize: 14.0,
               tooltip: 'Atualizar',
               onPressed: () {
-                savePage(5).whenComplete(() => Phoenix.rebirth(context));
+                weatherViews();
               },
             ),
           ),
@@ -85,9 +80,24 @@ class WeatherPageState extends State<WeatherPage> {
         padding: EdgeInsets.all(12.0),
         child: Column(
           children: [
-            _card(viewWeather.weather, viewWeatherDays.map!, 'Hoje'),
-            _card1(viewWeatherDays.map!, 1),
-            _card1(viewWeatherDays.map!, 2),
+            AnimatedBuilder(
+              animation: weather,
+              builder: (context, child) {
+                return _card(viewWeather.weather, viewWeatherDays.map!, 'Hoje');
+              },
+            ),
+            ListenableBuilder(
+              listenable: weather,
+              builder: (context, child) {
+                return _card1(viewWeatherDays.map!, 1);
+              },
+            ),
+            ListenableBuilder(
+              listenable: weather,
+              builder: (context, child) {
+                return _card1(viewWeatherDays.map!, 2);
+              },
+            ),
           ],
         ),
       ),

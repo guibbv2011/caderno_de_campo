@@ -1,13 +1,10 @@
 import 'package:caderno_do_campo/model/registers_model.dart';
 import 'package:caderno_do_campo/model/repository/database/list_titles_repository.dart';
-// import 'package:caderno_do_campo/model/repository/database/registers_repository.dart';
-// import 'package:caderno_do_campo/model/service/database/registers_db.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/list_titles_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/registers_viewmodel.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class RegistersPage extends StatefulWidget {
@@ -18,16 +15,11 @@ class RegistersPage extends StatefulWidget {
 }
 
 class RegistersPageState extends State<RegistersPage> {
-  // late final RegistersViewModel viewModel;
   late final ListTitlesViewModel viewModelAreaTitles;
   late final ListTitlesViewModel viewModelCultureTitles;
 
   @override
   void initState() {
-    // final databaseService = RegistersServiceDatabase();
-    // final repository = RegistersRepository(databaseService: databaseService);
-    // viewModel = RegistersViewModel(registersRepository: repository);
-
     final listRepository = ListTitlesRepository();
     viewModelAreaTitles = ListTitlesViewModel(
       listTitleRepository: listRepository,
