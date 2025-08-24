@@ -127,9 +127,12 @@ class _MyHomePageState extends State<MyHomePage> {
     WeatherPage(locate: viewLocate.location ?? LocationModel(0.0, 0.0)),
   ];
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Caderno do Campo'),
@@ -180,10 +183,17 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      body: IndexedStack(
-        alignment: Alignment.center,
-        index: _selectedIndex,
-        children: _pages,
+      body: GestureDetector(
+        onHorizontalDragEnd: (event) {
+          if (event.primaryVelocity! > 0) {
+            _scaffoldKey.currentState!.openDrawer();
+          }
+        },
+        child: IndexedStack(
+          alignment: Alignment.center,
+          index: _selectedIndex,
+          children: _pages,
+        ),
       ),
     );
   }
