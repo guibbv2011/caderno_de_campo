@@ -1,6 +1,7 @@
 import 'package:caderno_do_campo/model/registers_model.dart';
 import 'package:caderno_do_campo/model/repository/database/list_titles_repository.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
+import 'package:caderno_do_campo/view/shared/ui.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/list_titles_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/registers_viewmodel.dart';
@@ -96,9 +97,9 @@ class RegistersPageState extends State<RegistersPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            '${register.activity}',
-                            style: TextStyle(fontSize: 16),
+                          SizedBox(
+                            width: title_wbox(context),
+                            child: title_default(register.activity),
                           ),
                           Row(
                             children: [
@@ -124,11 +125,31 @@ class RegistersPageState extends State<RegistersPage> {
                           ),
                         ],
                       ),
-                      Text('Data: ${register.dateTime}'),
-                      Text('Cultura: ${register.culture}'),
-                      Text('Área: ${register.area}'),
-                      Text('responsable: ${register.responsable}'),
-                      Text('Ações: ${register.actions}'),
+                      kv_card(
+                        context: context,
+                        k: 'datetime',
+                        model: register.toMap(),
+                      ),
+                      kv_card(
+                        context: context,
+                        k: 'culture',
+                        model: register.toMap(),
+                      ),
+                      kv_card(
+                        context: context,
+                        k: 'area',
+                        model: register.toMap(),
+                      ),
+                      kv_card(
+                        context: context,
+                        k: 'responsable',
+                        model: register.toMap(),
+                      ),
+                      kv_card(
+                        context: context,
+                        k: 'actions',
+                        model: register.toMap(),
+                      ),
                     ],
                   ),
                 ),

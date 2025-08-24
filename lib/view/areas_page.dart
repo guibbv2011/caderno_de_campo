@@ -1,5 +1,6 @@
 import 'package:caderno_do_campo/model/areas_model.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
+import 'package:caderno_do_campo/view/shared/ui.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/areas_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +75,10 @@ class AreasPageState extends State<AreasPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('${area.name}', style: TextStyle(fontSize: 16)),
+                          SizedBox(
+                            width: title_wbox(context),
+                            child: title_default(area.name),
+                          ),
                           Row(
                             children: [
                               IconButton(
@@ -99,10 +103,18 @@ class AreasPageState extends State<AreasPage> {
                           ),
                         ],
                       ),
-                      Text('Área: ${area.area}'),
-                      Text('Local: ${area.location}'),
-                      Text('Canteiros: ${area.plat}'),
-                      Text('Ações: ${area.actions}'),
+                      kv_card(context: context, k: 'area', model: area.toMap()),
+                      kv_card(
+                        context: context,
+                        k: 'location',
+                        model: area.toMap(),
+                      ),
+                      kv_card(context: context, k: 'plat', model: area.toMap()),
+                      kv_card(
+                        context: context,
+                        k: 'actions',
+                        model: area.toMap(),
+                      ),
                     ],
                   ),
                 ),

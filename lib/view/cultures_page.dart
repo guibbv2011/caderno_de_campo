@@ -1,5 +1,6 @@
 import 'package:caderno_do_campo/model/cultures_model.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
+import 'package:caderno_do_campo/view/shared/ui.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/cultures_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -74,9 +75,9 @@ class CulturesPageState extends State<CulturesPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            '${culture.name}',
-                            style: TextStyle(fontSize: 16),
+                          SizedBox(
+                            width: title_wbox(context),
+                            child: title_default(culture.name),
                           ),
                           Row(
                             children: [
@@ -102,10 +103,26 @@ class CulturesPageState extends State<CulturesPage> {
                           ),
                         ],
                       ),
-                      Text('Variedade: ${culture.variety}'),
-                      Text('Ciclo: ${culture.cycle}'),
-                      Text('Observações: ${culture.obs}'),
-                      Text('Ações: ${culture.actions}'),
+                      kv_card(
+                        context: context,
+                        k: 'variety',
+                        model: culture.toMap(),
+                      ),
+                      kv_card(
+                        context: context,
+                        k: 'cycle',
+                        model: culture.toMap(),
+                      ),
+                      kv_card(
+                        context: context,
+                        k: 'obs',
+                        model: culture.toMap(),
+                      ),
+                      kv_card(
+                        context: context,
+                        k: 'actions',
+                        model: culture.toMap(),
+                      ),
                     ],
                   ),
                 ),

@@ -1,6 +1,7 @@
 import 'package:caderno_do_campo/model/costs_model.dart';
 import 'package:caderno_do_campo/model/repository/database/list_titles_repository.dart';
 import 'package:caderno_do_campo/view/shared/insert_dialog.dart';
+import 'package:caderno_do_campo/view/shared/ui.dart';
 import 'package:caderno_do_campo/view/shared/update_dialog.dart';
 import 'package:caderno_do_campo/viewmodel/costs_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/list_titles_viewmodel.dart';
@@ -87,9 +88,9 @@ class CostsPageState extends State<CostsPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            '${cost.category}',
-                            style: TextStyle(fontSize: 16),
+                          SizedBox(
+                            width: title_wbox(context),
+                            child: title_default(cost.category),
                           ),
                           Row(
                             children: [
@@ -115,11 +116,27 @@ class CostsPageState extends State<CostsPage> {
                           ),
                         ],
                       ),
-                      Text('Data: ${cost.dateTime}'),
-                      Text('Área: ${cost.area}'),
-                      Text('descrição: ${cost.description}'),
-                      Text('Custo: ${cost.value}'),
-                      Text('Ações: ${cost.actions}'),
+                      kv_card(
+                        context: context,
+                        k: 'datetime',
+                        model: cost.toMap(),
+                      ),
+                      kv_card(context: context, k: 'area', model: cost.toMap()),
+                      kv_card(
+                        context: context,
+                        k: 'description',
+                        model: cost.toMap(),
+                      ),
+                      kv_card(
+                        context: context,
+                        k: 'value',
+                        model: cost.toMap(),
+                      ),
+                      kv_card(
+                        context: context,
+                        k: 'actions',
+                        model: cost.toMap(),
+                      ),
                     ],
                   ),
                 ),

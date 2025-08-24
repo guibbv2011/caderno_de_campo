@@ -1,4 +1,4 @@
-// import 'package:caderno_do_campo/view/registers_page.dart';
+import 'package:caderno_do_campo/view/shared/ui.dart';
 import 'package:caderno_do_campo/viewmodel/areas_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/costs_viewmodel.dart';
 import 'package:caderno_do_campo/viewmodel/cultures_viewmodel.dart';
@@ -31,7 +31,8 @@ class OverviewPage extends StatefulWidget {
 }
 
 class OverviewPageState extends State<OverviewPage> {
-  late ValueNotifier<Map<String, dynamic>> viewModels;
+  ValueNotifier<Set> viewModels = ValueNotifier({});
+
   @override
   void initState() {
     widget.registersViewModel.addListener(() => setState(() {}));
@@ -45,10 +46,10 @@ class OverviewPageState extends State<OverviewPage> {
     widget.culturesViewModel.fetchCulturesCommand.execute();
 
     viewModels = ValueNotifier({
-      'registers': widget.registersViewModel,
-      'areas': widget.areasViewModel,
-      'costs': widget.costsViewModel,
-      'cultures': widget.culturesViewModel,
+      widget.registersViewModel,
+      widget.areasViewModel,
+      widget.costsViewModel,
+      widget.culturesViewModel,
     });
 
     super.initState();
@@ -71,6 +72,151 @@ class OverviewPageState extends State<OverviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Text('OverviewPage');
+    if (viewModels.value.isEmpty) {
+      return Center(child: CircularProgressIndicator());
+    }
+    return Scaffold(
+      appBar: AppBar(title: const Text('Visão Geral')),
+      body: Padding(
+        padding: const EdgeInsets.only(
+          top: 10.0,
+          bottom: 4.0,
+          left: 12.0,
+          right: 12.0,
+        ),
+        child: ListenableBuilder(
+          listenable: viewModels,
+          builder: (context, child) {
+            return ListView(
+              children: [
+                if (viewModels.value.elementAt(0).registers.isNotEmpty)
+                  _card(
+                    context,
+                    viewModels.value.elementAt(0).registers,
+                    'Registers',
+                    widget.onJumpToRegisters,
+                  ),
+
+                if (viewModels.value.elementAt(1).areas.isNotEmpty)
+                  _card(
+                    context,
+                    viewModels.value.elementAt(1).areas,
+                    'Areas',
+                    widget.onJumpToAreas,
+                  ),
+                if (viewModels.value.elementAt(3).cultures.isNotEmpty)
+                  _card(
+                    context,
+                    viewModels.value.elementAt(3).cultures,
+                    'Culturas',
+                    widget.onJumpToCultures,
+                  ),
+                if (viewModels.value.elementAt(2).costs.isNotEmpty)
+                  _card(
+                    context,
+                    viewModels.value.elementAt(2).costs,
+                    'Custos',
+                    widget.onJumpToCosts,
+                  ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
   }
+}
+
+Widget _card(context, List models, String title, toJump) {
+  return Padding(
+    padding: EdgeInsets.all(8.0),
+    child: Container(
+      width: double.infinity * 8.0,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.lightGreenAccent.shade700),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 12.0),
+                  child: SizedBox(
+                    width: title_wbox(context),
+                    child: title_default(
+                      '${models.length.toString()} ${title}',
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Tooltip(
+                      preferBelow: false,
+                      verticalOffset: 5,
+                      decoration: BoxDecoration(color: Colors.transparent),
+                      message: 'Vá para ${title}',
+                      textStyle: TextStyle(
+                        color: Colors.grey.shade200,
+                        fontSize: 10,
+                      ),
+                      child: IconButton(
+                        iconSize: 14,
+                        icon: Icon(Icons.navigation_outlined),
+                        onPressed: toJump,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                Text(
+                  'Último',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                ),
+                lastCard(context: context, model: models.last.toMap()),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget lastCard({
+  required BuildContext context,
+  required Map<String, dynamic> model,
+}) {
+  return Padding(
+    padding: const EdgeInsets.only(
+      top: 10.0,
+      bottom: 4.0,
+      left: 12.0,
+      right: 12.0,
+    ),
+    child: Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.lightGreen),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      width: double.infinity,
+      padding: EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (String k in model.keys.toList())
+            kv_card(context: context, k: k, model: model),
+        ],
+      ),
+    ),
+  );
 }
